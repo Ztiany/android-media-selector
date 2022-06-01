@@ -92,5 +92,5 @@ SystemMediaSelector 用于调用系统相机或 SAF 获取图片或文件。
 ## 5 Installation
 
 ```groovy
-implementation 'io.github.ztiany:android-media-selector:1.0.0'
+implementation 'io.github.ztiany:android-media-selector:1.1.0'
 ```
