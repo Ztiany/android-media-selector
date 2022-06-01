@@ -2,7 +2,7 @@
 
 Android 多媒体文件选择库，支持 **`target api = 31`**。
 
-[](media-selector.jpg)
+![](media-selector.jpg)
 
 ## 1 支持应用内多媒体文件选择
 
