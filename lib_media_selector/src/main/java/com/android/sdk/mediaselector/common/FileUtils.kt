@@ -13,19 +13,18 @@ import java.nio.file.Paths
 
 /**
  *@author Ztiany
- *      Email: ztiany3@gmail.com
- *      Date : 2020-08-11 11:04
  */
 @RequiresApi(Build.VERSION_CODES.O)
 internal fun copySingleToInternal(context: Context, uri: Uri): String? {
     val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null, null)
     var postfix = cursor?.use {
         if (it.moveToFirst()) {
-            StorageUtils.getFileExtension(it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME)))
+            val displayIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            StorageUtils.getFileExtension(it.getString(displayIndex))
         } else ""
     }
 
-    // TODO  get file extension via reading binary.
+    // TODO  get file extension via reading binary magic number.
     if (postfix.isNullOrBlank()) {
         postfix = StorageUtils.JPEG
     }

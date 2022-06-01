@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/act_frag_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:ignore="UsingOnClickInXml,HardcodedText,SmallSp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,9 +30,42 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="selectOnePhotoByMediaStore"
             android:layout_margin="10dp"
-            android:text="select a photo" />
+            android:onClick="selectOnePhotoByMediaStore"
+            android:text="select a photo(no media location)"
+            android:textSize="10sp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:onClick="selectOnePhotoWithCameraByMediaStore"
+            android:text="select a photo with camera"
+            android:textSize="10sp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:onClick="selectOnePhotoWithCameraAndCropByMediaStore"
+            android:text="select a photo with camera and crop(including gif)"
+            android:textSize="10sp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:onClick="selectMultiPhotoByMediaStore"
+            android:text="select multi photos(include gif)"
+            android:textSize="10sp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:onClick="selectOneVideoByMediaStore"
+            android:text="select a video"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="match_parent"

@@ -50,8 +50,8 @@ public class PickerPresenter implements PickerContract.Presenter {
     private boolean mIsLoadingNextPage;
 
     private String mCurrentAlbumId;
-    private LoadMediaCallback mLoadMediaCallback;
-    private LoadAlbumCallback mLoadAlbumCallback;
+    private final LoadMediaCallback mLoadMediaCallback;
+    private final LoadAlbumCallback mLoadAlbumCallback;
 
     public PickerPresenter(PickerContract.View tasksView) {
         this.mTasksView = tasksView;
@@ -134,7 +134,7 @@ public class PickerPresenter implements PickerContract.Presenter {
 
     private static class LoadMediaCallback implements IMediaTaskCallback<BaseMedia> {
 
-        private WeakReference<PickerPresenter> mWr;
+        private final WeakReference<PickerPresenter> mWr;
 
         LoadMediaCallback(PickerPresenter presenter) {
             mWr = new WeakReference<>(presenter);
@@ -165,7 +165,7 @@ public class PickerPresenter implements PickerContract.Presenter {
             if (mediafilter == null) {
                 return !isFileValid;
             } else {
-                return !isFileValid || mediafilter.filterPath(media.getUri()) || mediafilter.filerSize(media.getSize());
+                return !isFileValid || mediafilter.filterUri(media.getUri()) || mediafilter.filerSize(media.getSize());
             }
         }
 
@@ -173,7 +173,7 @@ public class PickerPresenter implements PickerContract.Presenter {
 
     private static class LoadAlbumCallback implements IAlbumTaskCallback {
 
-        private WeakReference<PickerPresenter> mWr;
+        private final WeakReference<PickerPresenter> mWr;
 
         LoadAlbumCallback(PickerPresenter presenter) {
             mWr = new WeakReference<>(presenter);

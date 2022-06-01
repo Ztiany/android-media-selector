@@ -7,12 +7,13 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.TypedValue;
 
+import com.bilibili.boxing.BoxingMediaLoader;
+import com.bilibili.boxing.loader.IBoxingMediaLoader;
+import com.bilibili.boxing.utils.BoxingFileHelper;
 import com.ztiany.mediaselector.R;
 
 /**
  * @author Ztiany
- * Email: ztiany3@gmail.com
- * Date : 2019-11-22 11:36
  */
 public class MediaSelectorConfiguration {
 
@@ -58,6 +59,20 @@ public class MediaSelectorConfiguration {
 
     public static boolean isForceUseLegacyApi() {
         return sForceUseLegacyApi;
+    }
+
+    /**
+     * using <a href='https://github.com/bumptech/glide'>glide</a> as the media loader in default. you can change it by providing your own {@link IBoxingMediaLoader}.
+     */
+    public static void setImageLoader(IBoxingMediaLoader boxingMediaLoader) {
+        BoxingMediaLoader.getInstance().init(boxingMediaLoader);
+    }
+
+    /**
+     * the default is "boxing".
+     */
+    public static void setCameraPhotoFolderName(String folderName) {
+        BoxingFileHelper.DEFAULT_SUB_DIR = folderName;
     }
 
 }

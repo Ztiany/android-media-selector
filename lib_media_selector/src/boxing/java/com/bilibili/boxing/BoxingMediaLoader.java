@@ -20,10 +20,10 @@ package com.bilibili.boxing;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+
 import com.bilibili.boxing.loader.IBoxingCallback;
 import com.bilibili.boxing.loader.IBoxingMediaLoader;
-
-import androidx.annotation.NonNull;
 
 /**
  * A loader holding {@link IBoxingMediaLoader} to displayThumbnail medias.
@@ -33,6 +33,7 @@ import androidx.annotation.NonNull;
 public class BoxingMediaLoader {
 
     private static final BoxingMediaLoader INSTANCE = new BoxingMediaLoader();
+
     private IBoxingMediaLoader mLoader;
 
     private BoxingMediaLoader() {

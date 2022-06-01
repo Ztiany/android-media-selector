@@ -19,14 +19,14 @@ package com.bilibili.boxing.presenter;
 
 import android.content.ContentResolver;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.BaseMedia;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
  * This specifies the contract between the view and the presenter.

@@ -32,6 +32,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+
 import com.bilibili.boxing.AbsBoxingViewFragment;
 
 import java.io.File;
@@ -39,11 +44,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
 
 /**
  * A helper to start camera.<br/>
@@ -53,7 +53,7 @@ import androidx.fragment.app.Fragment;
  */
 public class CameraPickerHelper {
 
-    private static final int MAX_CAMER_PHOTO_SIZE = 4 * 1024 * 1024;
+    private static final int MAX_CAMERA_PHOTO_SIZE = 4 * 1024 * 1024;
     public static final int REQ_CODE_CAMERA = 0x2001;
     private static final String STATE_SAVED_KEY = "com.bilibili.boxing.utils.CameraPickerHelper.saved_state";
 
@@ -221,7 +221,7 @@ public class CameraPickerHelper {
             if (degree == 0) {
                 return true;
             }
-            int quality = file.length() >= MAX_CAMER_PHOTO_SIZE ? 90 : 100;
+            int quality = file.length() >= MAX_CAMERA_PHOTO_SIZE ? 90 : 100;
             Matrix matrix = new Matrix();
             matrix.postRotate(degree);
             BitmapFactory.Options options = new BitmapFactory.Options();

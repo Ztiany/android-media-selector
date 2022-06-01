@@ -7,9 +7,9 @@ import android.os.Parcelable
  * 裁剪配置类
  */
 data class CropOptions(
-        /**裁剪宽度比例 与aspectY组合，如16:9*/
+        /**裁剪宽度比例  aspectY 组合，如 16:9 */
         val aspectX: Int = 0,
-        /** 高度比例与aspectX组合，如16:9*/
+        /** 高度比例与 aspectX 组合，如 16:9 */
         val aspectY: Int = 0,
         /**输出图片的宽度*/
         val outputX: Int = 0,

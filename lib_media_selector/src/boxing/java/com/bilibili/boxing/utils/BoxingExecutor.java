@@ -19,6 +19,7 @@ package com.bilibili.boxing.utils;
 
 import android.os.Handler;
 import android.os.Looper;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -31,6 +32,7 @@ import java.util.concurrent.FutureTask;
  * @author ChenSL
  */
 public class BoxingExecutor {
+
     private static final BoxingExecutor INSTANCE = new BoxingExecutor();
 
     private ExecutorService mExecutorService;

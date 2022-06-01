@@ -2,6 +2,7 @@ package com.android.sdk.mediaselector.custom
 
 import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -20,17 +21,25 @@ import java.io.File
 /**
  *@author Ztiany
  */
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.Q)
 internal class AndroidQMediaSelector : BaseMediaSelector {
 
     constructor(activity: AppCompatActivity, resultListener: ResultListener) : super(activity, resultListener)
 
     constructor(fragment: Fragment, resultListener: ResultListener) : super(fragment, resultListener)
 
+    ///////////////////////////////////////////////////////////////////////////
+    // handle single result
+    ///////////////////////////////////////////////////////////////////////////
     override fun handleSingleResult(baseMedia: BaseMedia) {
         Timber.d("handleMultiResult() called with: medias = $baseMedia")
 
-        if (mCurrentInstruction.isCopyToInternal || mCurrentInstruction.isNeedCrop) {
+        //replace uri if need the access of media location.
+        if (currentInstruction.isNeedAccessMediaLocation) {
+            baseMedia.uri = MediaStore.setRequireOriginal(baseMedia.uri)
+        }
+
+        if (currentInstruction.isCopyToInternal || currentInstruction.isNeedCrop) {
 
             val absolutePath = MediaUtils.getAbsolutePath(context, baseMedia.uri) ?: ""
             val alreadyInternal = absolutePath.contains("Android/data/${context.packageName}")
@@ -39,7 +48,7 @@ internal class AndroidQMediaSelector : BaseMediaSelector {
 
             if (alreadyInternal) {
                 when {
-                    mCurrentInstruction.isNeedCrop -> toCrop(absolutePath)
+                    currentInstruction.isNeedCrop -> toCrop(absolutePath)
                     else -> mediaSelectorCallback.onTakeSuccess(newUriList(absolutePath))
                 }
             } else {
@@ -48,6 +57,7 @@ internal class AndroidQMediaSelector : BaseMediaSelector {
 
             return
         }
+
         mediaSelectorCallback.onTakeSuccess(listOf(baseMedia.uri))
     }
 
@@ -60,15 +70,30 @@ internal class AndroidQMediaSelector : BaseMediaSelector {
 
             when {
                 copied == null -> mediaSelectorCallback.onTakeFail()
-                mCurrentInstruction.isNeedCrop -> toCrop(copied)
+                currentInstruction.isNeedCrop -> toCrop(copied)
                 else -> mediaSelectorCallback.onTakeSuccess(newUriList(copied))
             }
         }
     }
 
+    override fun handleSingleCropResult(absolutePath: String) {
+        mediaSelectorCallback.onTakeSuccess(newUriList(absolutePath))
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // handle multi results
+    ///////////////////////////////////////////////////////////////////////////
     override fun handleMultiResult(medias: ArrayList<BaseMedia>) {
         Timber.d("handleMultiResult() called with: medias = $medias")
-        if (mCurrentInstruction.isCopyToInternal) {
+
+        //replace uri if need the access of media location.
+        if (currentInstruction.isNeedAccessMediaLocation) {
+            medias.forEach {
+                it.uri = MediaStore.setRequireOriginal(it.uri)
+            }
+        }
+
+        if (currentInstruction.isCopyToInternal) {
             copyToInternalAndReturn(medias)
         } else {
             medias.map {

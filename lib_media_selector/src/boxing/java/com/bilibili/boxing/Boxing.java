@@ -24,6 +24,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.entity.BaseMedia;
@@ -32,13 +36,9 @@ import com.bilibili.boxing.presenter.PickerPresenter;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 /**
  * An entry for {@link AbsBoxingActivity} and {@link AbsBoxingViewFragment}.<br/>
- *
+ * <p>
  * to use {@link AbsBoxingActivity} + {@link AbsBoxingViewFragment} combination,
  * call {@link #withIntent(Context, Class)} to make a intent and {@link #start(Activity)} to start a new Activity.<br/><br/>
  * to use {@link AbsBoxingViewFragment} only, just call {@link #setupFragment(AbsBoxingViewFragment, OnBoxingFinishListener)}.<br/><br/>

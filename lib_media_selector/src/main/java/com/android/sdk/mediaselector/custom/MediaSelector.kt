@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import com.android.base.delegate.activity.ActivityDelegateOwner
 import com.android.base.delegate.fragment.FragmentDelegateOwner
 import com.android.sdk.mediaselector.common.ActivityStateHandler
-import com.android.sdk.mediaselector.common.MediaSelectorConfiguration
 import com.android.sdk.mediaselector.common.ResultListener
 import com.android.sdk.mediaselector.common.autoCallback
 import timber.log.Timber
@@ -19,7 +18,9 @@ import timber.log.Timber
  */
 interface MediaSelector : ActivityStateHandler {
 
-    fun newInstruction(): Instruction
+    fun takePicture(): Instruction
+
+    fun takeVideo(): Instruction
 
 }
 
@@ -29,16 +30,14 @@ interface MediaSelector : ActivityStateHandler {
  *@author Ztiany
  */
 fun newMediaSelector(activity: AppCompatActivity, resultListener: ResultListener): MediaSelector {
-    return if (Build.VERSION.SDK_INT < 29 || MediaSelectorConfiguration.isForceUseLegacyApi()) {
+    return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
         Timber.d("newSystemMediaSelector LegacySystemMediaSelector")
-        val mediaSelector = LegacyMediaSelector(activity, resultListener)
-        autoCallback(activity, mediaSelector)
-        mediaSelector
+        LegacyMediaSelector(activity, resultListener)
     } else {
         Timber.d("newSystemMediaSelector AndroidPSystemMediaSelector")
-        val mediaSelector = AndroidQMediaSelector(activity, resultListener)
-        autoCallback(activity, mediaSelector)
-        mediaSelector
+        AndroidQMediaSelector(activity, resultListener)
+    }.also {
+        autoCallback(activity, it)
     }
 }
 
@@ -48,15 +47,13 @@ fun newMediaSelector(activity: AppCompatActivity, resultListener: ResultListener
  *@author Ztiany
  */
 fun newMediaSelector(fragment: Fragment, resultListener: ResultListener): MediaSelector {
-    return if (Build.VERSION.SDK_INT < 29 || MediaSelectorConfiguration.isForceUseLegacyApi()) {
+    return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
         Timber.d("newSystemMediaSelector LegacySystemMediaSelector")
-        val mediaSelector = LegacyMediaSelector(fragment, resultListener)
-        autoCallback(fragment, mediaSelector)
-        mediaSelector
+        LegacyMediaSelector(fragment, resultListener)
     } else {
         Timber.d("newSystemMediaSelectorAndroidPSystemMediaSelector")
-        val mediaSelector = AndroidQMediaSelector(fragment, resultListener)
-        autoCallback(fragment, mediaSelector)
-        mediaSelector
+        AndroidQMediaSelector(fragment, resultListener)
+    }.also {
+        autoCallback(fragment, it)
     }
 }

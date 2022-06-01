@@ -34,7 +34,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 
 /**
- * use https://github.com/bumptech/glide as media loader.
+ * use <a href='https://github.com/bumptech/glide'>glide</a> as the media loader.
  *
  * @author ChenSL
  */

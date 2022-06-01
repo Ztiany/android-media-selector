@@ -20,11 +20,11 @@ package com.bilibili.boxing.model.config;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.DrawableRes;
+
 import com.bilibili.boxing.model.callback.MediaFilter;
 
 import org.jetbrains.annotations.NotNull;
-
-import androidx.annotation.DrawableRes;
 
 /**
  * The pick config.<br/>
@@ -112,8 +112,8 @@ public class BoxingConfig implements Parcelable {
      *
      * @return >0, set a valid drawable resource; otherwise without a placeholder.
      */
-    public @DrawableRes
-    int getMediaPlaceHolderRes() {
+    @DrawableRes
+    public int getMediaPlaceHolderRes() {
         return mMediaPlaceHolderRes;
     }
 
@@ -122,8 +122,8 @@ public class BoxingConfig implements Parcelable {
      *
      * @return >0, set a valid drawable resource; otherwise without a placeholder.
      */
-    public @DrawableRes
-    int getMediaCheckedRes() {
+    @DrawableRes
+    public int getMediaCheckedRes() {
         return mMediaCheckedRes;
     }
 
@@ -132,8 +132,8 @@ public class BoxingConfig implements Parcelable {
      *
      * @return >0, set a valid drawable resource; otherwise without a placeholder.
      */
-    public @DrawableRes
-    int getMediaUnCheckedRes() {
+    @DrawableRes
+    public int getMediaUnCheckedRes() {
         return mMediaUnCheckedRes;
     }
 
@@ -142,8 +142,8 @@ public class BoxingConfig implements Parcelable {
      *
      * @return >0, set a valid drawable resource; otherwise without a placeholder.
      */
-    public @DrawableRes
-    int getCameraRes() {
+    @DrawableRes
+    public int getCameraRes() {
         return mCameraRes;
     }
 
@@ -152,8 +152,8 @@ public class BoxingConfig implements Parcelable {
      *
      * @return >0, set a valid drawable resource; otherwise without a placeholder.
      */
-    public @DrawableRes
-    int getAlbumPlaceHolderRes() {
+    @DrawableRes
+    public int getAlbumPlaceHolderRes() {
         return mAlbumPlaceHolderRes;
     }
 
@@ -162,8 +162,8 @@ public class BoxingConfig implements Parcelable {
      *
      * @return >0, set a valid drawable resource; otherwise without a placeholder.
      */
-    public @DrawableRes
-    int getVideoDurationRes() {
+    @DrawableRes
+    public int getVideoDurationRes() {
         return mVideoDurationRes;
     }
 

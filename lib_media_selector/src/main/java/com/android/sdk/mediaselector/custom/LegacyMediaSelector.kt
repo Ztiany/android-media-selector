@@ -19,8 +19,11 @@ internal class LegacyMediaSelector : BaseMediaSelector {
 
     constructor(fragment: Fragment, resultListener: ResultListener) : super(fragment, resultListener)
 
+    ///////////////////////////////////////////////////////////////////////////
+    // handle single result
+    ///////////////////////////////////////////////////////////////////////////
     override fun handleSingleResult(baseMedia: BaseMedia) {
-        val cropOptions = mCurrentInstruction.cropOptions
+        val cropOptions = currentInstruction.cropOptions
         if (cropOptions == null) {
             returnSingleDataChecked(baseMedia.uri)
         } else {
@@ -33,6 +36,13 @@ internal class LegacyMediaSelector : BaseMediaSelector {
         }
     }
 
+    override fun handleSingleCropResult(absolutePath: String) {
+        mediaSelectorCallback.onTakeSuccess(newUriList(absolutePath))
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // handle multi results
+    ///////////////////////////////////////////////////////////////////////////
     override fun handleMultiResult(medias: ArrayList<BaseMedia>) {
         val result = medias.mapNotNull {
             MediaUtils.getAbsolutePath(context, it.uri)?.run {

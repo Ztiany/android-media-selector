@@ -18,11 +18,11 @@
 package com.bilibili.boxing.model.callback;
 
 
+import androidx.annotation.Nullable;
+
 import com.bilibili.boxing.model.entity.BaseMedia;
 
 import java.util.List;
-
-import androidx.annotation.Nullable;
 
 /**
  * A callback to load {@link BaseMedia}.

@@ -19,6 +19,8 @@ package com.bilibili.boxing.model;
 
 import android.content.ContentResolver;
 
+import androidx.annotation.NonNull;
+
 import com.bilibili.boxing.model.callback.IAlbumTaskCallback;
 import com.bilibili.boxing.model.callback.IMediaTaskCallback;
 import com.bilibili.boxing.model.config.BoxingConfig;
@@ -27,8 +29,6 @@ import com.bilibili.boxing.model.task.impl.AlbumTask;
 import com.bilibili.boxing.model.task.impl.ImageTask;
 import com.bilibili.boxing.model.task.impl.VideoTask;
 import com.bilibili.boxing.utils.BoxingExecutor;
-
-import androidx.annotation.NonNull;
 
 /**
  * The Manager to load {@link IMediaTask} and {@link AlbumTask}, holding {@link BoxingConfig}.

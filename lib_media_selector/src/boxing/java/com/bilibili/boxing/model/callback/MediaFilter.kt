@@ -5,15 +5,13 @@ import android.os.Parcelable
 
 /**
  *@author Ztiany
- *      Email: ztiany3@gmail.com
- *      Date : 2020-10-14 15:09
  */
 interface MediaFilter : Parcelable {
 
-    /**Return true means the Media will be filtered.*/
-    fun filterPath(uri: Uri): Boolean
+    /** Returning true means the file represented by this [uri] will be discarded. */
+    fun filterUri(uri: Uri): Boolean
 
-    /**Return true means the Media will be filtered.*/
+    /** Returning true means the file whose size is bigger than the specified will be discarded. */
     fun filerSize(size: Long): Boolean
 
 }

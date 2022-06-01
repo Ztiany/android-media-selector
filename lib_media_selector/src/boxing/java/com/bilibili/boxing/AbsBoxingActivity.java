@@ -20,6 +20,9 @@ package com.bilibili.boxing;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.entity.BaseMedia;
@@ -27,9 +30,6 @@ import com.bilibili.boxing.presenter.PickerContract;
 import com.bilibili.boxing.presenter.PickerPresenter;
 
 import java.util.ArrayList;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * A abstract class to connect {@link com.bilibili.boxing.presenter.PickerContract.View} and {@link com.bilibili.boxing.presenter.PickerContract.Presenter}.

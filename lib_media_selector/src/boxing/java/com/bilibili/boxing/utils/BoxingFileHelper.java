@@ -22,11 +22,11 @@ import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
 
-import java.io.File;
-import java.util.concurrent.ExecutionException;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 /**
  * A file helper to make thing easier.
@@ -35,7 +35,7 @@ import androidx.annotation.Nullable;
  */
 public class BoxingFileHelper {
 
-    public static final String DEFAULT_SUB_DIR = "/boxing";
+    public static String DEFAULT_SUB_DIR = "/boxing";
 
     public static boolean createFile(String path) throws ExecutionException, InterruptedException {
         if (TextUtils.isEmpty(path)) {

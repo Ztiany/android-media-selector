@@ -24,6 +24,10 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bilibili.boxing.loader.IBoxingCallback;
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.config.BoxingConfig;
@@ -36,10 +40,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * A abstract class which implements {@link PickerContract.View} for custom media view.

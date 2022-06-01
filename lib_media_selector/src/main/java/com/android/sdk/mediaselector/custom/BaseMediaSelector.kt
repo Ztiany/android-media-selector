@@ -12,14 +12,12 @@ import androidx.lifecycle.LifecycleOwner
 import com.android.sdk.mediaselector.common.ActFragWrapper
 import com.android.sdk.mediaselector.common.MediaUtils
 import com.android.sdk.mediaselector.common.ResultListener
-import com.android.sdk.mediaselector.common.newUriList
 import com.bilibili.boxing.Boxing
 import com.bilibili.boxing.model.config.BoxingConfig
 import com.bilibili.boxing.model.entity.BaseMedia
 import com.bilibili.boxing_impl.ui.BoxingActivity
 import com.ztiany.mediaselector.R
 import timber.log.Timber
-import java.util.ArrayList
 
 private const val REQUEST_BOXING = 10715;
 internal const val REQUEST_UCROP = 10716
@@ -27,8 +25,6 @@ private const val INSTRUCTOR_KEY = "custom_instructor_key"
 
 /**
  *@author Ztiany
- *      Email: ztiany3@gmail.com
- *      Date : 2020-08-11 10:09
  */
 internal abstract class BaseMediaSelector : MediaSelector {
 
@@ -38,7 +34,7 @@ internal abstract class BaseMediaSelector : MediaSelector {
 
     protected val lifecycleOwner: LifecycleOwner
 
-    protected lateinit var mCurrentInstruction: Instruction
+    protected lateinit var currentInstruction: Instruction
 
     val context: Context
         get() = actFragWrapper.context
@@ -55,17 +51,23 @@ internal abstract class BaseMediaSelector : MediaSelector {
         lifecycleOwner = fragment
     }
 
-    final override fun newInstruction(): Instruction =
-        Instruction(this)
+
+    final override fun takePicture(): Instruction {
+        return Instruction(this, Instruction.PICTURE)
+    }
+
+    final override fun takeVideo(): Instruction {
+        return Instruction(this, Instruction.VIDEO)
+    }
 
     fun start(instruction: Instruction): Boolean {
-        mCurrentInstruction = instruction
+        currentInstruction = instruction
         return configAndStart()
     }
 
     private fun configAndStart(): Boolean {
         val boxingConfig = createBoxingConfig()
-        if (mCurrentInstruction.isNeedCamera) {
+        if (currentInstruction.isNeedCamera) {
             boxingConfig.needCamera(R.drawable.ic_boxing_camera)
         }
         return start(boxingConfig)
@@ -91,16 +93,24 @@ internal abstract class BaseMediaSelector : MediaSelector {
     }
 
     private fun createBoxingConfig(): BoxingConfig {
-        return if (mCurrentInstruction.takingType == Instruction.PICTURE) {
-            if (mCurrentInstruction.isMulti) {
-                BoxingConfig(BoxingConfig.Mode.MULTI_IMG).withMaxCount(mCurrentInstruction.count)
+        return if (currentInstruction.takingType == Instruction.PICTURE) {
+            if (currentInstruction.moreThanOne()) {
+                Timber.d("selecting multi pictures: %d", currentInstruction.count)
+                BoxingConfig(BoxingConfig.Mode.MULTI_IMG).withMaxCount(currentInstruction.count)
             } else {
+                Timber.d("selecting single picture")
                 BoxingConfig(BoxingConfig.Mode.SINGLE_IMG)
+            }.also {
+                if (currentInstruction.isNeedGif) {
+                    Timber.d("need gif")
+                    it.needGif()
+                }
             }
         } else {
+            Timber.d("selecting single video")
             BoxingConfig(BoxingConfig.Mode.VIDEO)
         }.also {
-            it.mediaFilter = mCurrentInstruction.mediaFilter
+            it.mediaFilter = currentInstruction.mediaFilter
         }
     }
 
@@ -126,7 +136,7 @@ internal abstract class BaseMediaSelector : MediaSelector {
         if (requestCode == REQUEST_BOXING) {
             handleResult(data)
         } else if (requestCode == REQUEST_UCROP) {
-            processUCropResult(data)
+            processCropResult(data)
         }
     }
 
@@ -144,26 +154,22 @@ internal abstract class BaseMediaSelector : MediaSelector {
         }
     }
 
-    abstract fun handleSingleResult(baseMedia: BaseMedia)
-
-    abstract fun handleMultiResult(medias: ArrayList<BaseMedia>)
-
     @CallSuper
     override fun onSaveInstanceState(outState: Bundle) {
-        if (::mCurrentInstruction.isInitialized) {
-            outState.putParcelable(INSTRUCTOR_KEY, mCurrentInstruction)
+        if (::currentInstruction.isInitialized) {
+            outState.putParcelable(INSTRUCTOR_KEY, currentInstruction)
         }
     }
 
     @CallSuper
     override fun onRestoreInstanceState(outState: Bundle?) {
-        if (!::mCurrentInstruction.isInitialized) {
+        if (!::currentInstruction.isInitialized) {
             outState?.getParcelable<Instruction>(INSTRUCTOR_KEY)?.let {
-                mCurrentInstruction = it
+                currentInstruction = it
             }
         }
-        if (::mCurrentInstruction.isInitialized) {
-            mCurrentInstruction.setMediaSelector(this)
+        if (::currentInstruction.isInitialized) {
+            currentInstruction.setMediaSelector(this)
         }
     }
 
@@ -173,25 +179,34 @@ internal abstract class BaseMediaSelector : MediaSelector {
 
     protected fun toCrop(src: String) {
         MediaUtils.toUCrop(
-                actFragWrapper.context,
-                actFragWrapper.fragment,
-                src,
-                mCurrentInstruction.cropOptions,
-                REQUEST_UCROP)
+            actFragWrapper.context,
+            actFragWrapper.fragment,
+            src,
+            currentInstruction.cropOptions,
+            REQUEST_UCROP
+        )
     }
 
-    private fun processUCropResult(data: Intent?) {
+    private fun processCropResult(data: Intent?) {
         val uCropResult = MediaUtils.getUCropResult(data)
         if (uCropResult == null) {
             mediaSelectorCallback.onTakeFail()
         } else {
             val absolutePath = MediaUtils.getAbsolutePath(context, uCropResult)
             if (!TextUtils.isEmpty(absolutePath)) {
-                mediaSelectorCallback.onTakeSuccess(newUriList(absolutePath))
+                handleSingleCropResult(absolutePath)
             } else {
                 mediaSelectorCallback.onTakeFail()
             }
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // for children
+    ///////////////////////////////////////////////////////////////////////////
+
+    abstract fun handleSingleResult(baseMedia: BaseMedia)
+    abstract fun handleSingleCropResult(absolutePath: String)
+    abstract fun handleMultiResult(medias: ArrayList<BaseMedia>)
 
 }

@@ -23,6 +23,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.bilibili.boxing.model.entity.BaseMedia;
 import com.bilibili.boxing.utils.BoxingFileHelper;
 
@@ -30,8 +32,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Objects;
-
-import androidx.annotation.NonNull;
 
 /**
  * Id and absolute path is necessary.Builder Mode can be used too.
@@ -232,8 +232,8 @@ public class ImageMedia extends BaseMedia implements Parcelable {
 
     public static class Builder {
 
-        private String mId;
-        private Uri mImageUri;
+        private final String mId;
+        private final Uri mImageUri;
         private boolean mIsSelected;
         private Uri mThumbnailPath;
         private String mSize;

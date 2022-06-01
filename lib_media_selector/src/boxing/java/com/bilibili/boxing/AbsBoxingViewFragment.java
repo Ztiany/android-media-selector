@@ -17,6 +17,8 @@
 
 package com.bilibili.boxing;
 
+import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -25,6 +27,11 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.config.BoxingConfig;
@@ -41,13 +48,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import timber.log.Timber;
-
-import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 
 
 /**
@@ -59,8 +60,10 @@ import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
  */
 public abstract class AbsBoxingViewFragment extends Fragment implements PickerContract.View {
 
-    public static final String[] STORAGE_PERMISSIONS =
-            {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+    public static final String[] STORAGE_PERMISSIONS = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+    };
 
     public static final String[] CAMERA_PERMISSIONS = {Manifest.permission.CAMERA};
 
@@ -330,7 +333,7 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
      * use {@link #showMedia(List, int)} to get the result.
      */
     public final void loadMedias() {
-        Timber.d(" ---------loadMedias--------" );
+        Timber.d(" ---------loadMedias--------");
         mPresenter.loadMedias(0, AlbumEntity.DEFAULT_NAME);
     }
 
@@ -409,7 +412,7 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
 
     private static final class CameraListener implements CameraPickerHelper.Callback {
 
-        private WeakReference<AbsBoxingViewFragment> mWr;
+        private final WeakReference<AbsBoxingViewFragment> mWr;
 
         CameraListener(AbsBoxingViewFragment fragment) {
             mWr = new WeakReference<>(fragment);

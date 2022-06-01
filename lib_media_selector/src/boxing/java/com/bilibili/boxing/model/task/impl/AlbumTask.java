@@ -25,6 +25,10 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
+import androidx.collection.ArrayMap;
+
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.callback.IAlbumTaskCallback;
 import com.bilibili.boxing.model.config.BoxingConfig;
@@ -34,14 +38,10 @@ import com.bilibili.boxing.utils.BoxingExecutor;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.WorkerThread;
-import androidx.collection.ArrayMap;
+import java.util.Objects;
 
 /**
  * A task to load albums.
@@ -60,9 +60,9 @@ public class AlbumTask {
     private static final String[] SELECTION_ARGS_IMAGE_MIME_TYPE_WITHOUT_GIF = {"image/jpeg", "image/png", "image/jpg"};
 
     private int mUnknownAlbumNumber = 1;
-    private Map<String, AlbumEntity> mBucketMap;
-    private AlbumEntity mDefaultAlbum;
-    private BoxingConfig mPickerConfig;
+    private final Map<String, AlbumEntity> mBucketMap;
+    private final AlbumEntity mDefaultAlbum;
+    private final BoxingConfig mPickerConfig;
 
     public AlbumTask() {
         this.mBucketMap = new ArrayMap<>();
@@ -76,22 +76,17 @@ public class AlbumTask {
     }
 
     private void buildAlbumInfo(ContentResolver cr) {
-
         String[] distinctBucketColumns = new String[]{Media.BUCKET_ID, Media.BUCKET_DISPLAY_NAME};
 
-        try (Cursor bucketCursor = cr.query(
-                Media.EXTERNAL_CONTENT_URI,
-                distinctBucketColumns,
-                null,
-                null,
-                Media.DATE_MODIFIED + " desc")) {
+        Uri mediaCollection = UriUtils.getExternalImageUriVersionChecked();
+
+        try (Cursor bucketCursor = cr.query(mediaCollection, distinctBucketColumns, null, null, Media.DATE_MODIFIED + " desc")) {
 
             if (bucketCursor == null) {
                 return;
             }
 
-            //去重
-            HashSet<HashMap<String, String>> hashSet = new HashSet<>();
+            HashSet<AlbumItem> hashSet = new HashSet<>();
             int bucketCursorColumnIndex = bucketCursor.getColumnIndex(Media.BUCKET_ID);
             int displayNameColumnIndex = bucketCursor.getColumnIndex(Media.BUCKET_DISPLAY_NAME);
 
@@ -100,29 +95,25 @@ public class AlbumTask {
                     String buckId = bucketCursor.getString(bucketCursorColumnIndex);
                     String name = bucketCursor.getString(displayNameColumnIndex);
                     if (!TextUtils.isEmpty(buckId)) {
-                        HashMap<String, String> map = new HashMap<>(2);
-                        map.put("buckId", buckId);
-                        map.put("name", name);
-                        hashSet.add(map);
+                        hashSet.add(new AlbumItem(buckId, name));
                     }
                 } while (bucketCursor.moveToNext());
             }
 
-            for (HashMap<String, String> map : hashSet) {
-                if (!TextUtils.isEmpty(map.get("buckId"))) {
-                    AlbumEntity album = buildAlbumInfo(map.get("name"), map.get("buckId"));
-                    buildAlbumCoverVersionChecked(cr, map.get("buckId"), album);
+            for (AlbumItem albumItem : hashSet) {
+                if (!TextUtils.isEmpty(albumItem.bucketId)) {
+                    AlbumEntity album = buildAlbumInfo(albumItem.albumName, albumItem.bucketId);
+                    buildAlbumCoverVersionChecked(cr, albumItem.bucketId, album);
                 }
             }
-
         }
     }
 
     private void buildAlbumCoverVersionChecked(ContentResolver cr, String buckId, AlbumEntity album) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            buildAlbumCoverBelowAndroidQ(cr, buckId, album);
-        } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             buildAlbumCoverAboveAndroidQ(cr, buckId, album);
+        } else {
+            buildAlbumCoverBelowAndroidQ(cr, buckId, album);
         }
     }
 
@@ -201,13 +192,17 @@ public class AlbumTask {
 
         try (Cursor coverCursor = cr.query(Media.EXTERNAL_CONTENT_URI, photoColumn, selectionId, selectionArgs, Media.DATE_MODIFIED + " desc")) {
             if (coverCursor != null && coverCursor.moveToFirst()) {
-                String picPath = coverCursor.getString(coverCursor.getColumnIndex(Media.DATA));
-                String id = coverCursor.getString(coverCursor.getColumnIndex(Media._ID));
+                int dataIndex = coverCursor.getColumnIndex(Media.DATA);
+                int idIndex = coverCursor.getColumnIndex(Media._ID);
+
+                String picPath = coverCursor.getString(dataIndex);
+                String id = coverCursor.getString(idIndex);
+
                 album.mCount = coverCursor.getCount();
                 album.mImageList.add(new ImageMedia(id, Uri.fromFile(new File(picPath))));
-                if (album.mImageList.size() > 0) {
-                    mBucketMap.put(buckId, album);
-                }
+                album.mImageList.size();
+
+                mBucketMap.put(buckId, album);
             }
         }
     }
@@ -225,15 +220,38 @@ public class AlbumTask {
 
         try (Cursor coverCursor = cr.query(Media.EXTERNAL_CONTENT_URI, photoColumn, selectionId, selectionArgs, Media.DATE_MODIFIED + " desc")) {
             if (coverCursor != null && coverCursor.moveToFirst()) {
-                String id = coverCursor.getString(coverCursor.getColumnIndex(Media._ID));
+                int idIndex = coverCursor.getColumnIndex(Media._ID);
+                String id = coverCursor.getString(idIndex);
                 Uri contentUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, Integer.parseInt(id));
-
                 album.mCount = coverCursor.getCount();
                 album.mImageList.add(new ImageMedia(id, contentUri));
-                if (album.mImageList.size() > 0) {
-                    mBucketMap.put(buckId, album);
-                }
+                album.mImageList.size();
+                mBucketMap.put(buckId, album);
             }
+        }
+    }
+
+    private static class AlbumItem {
+
+        final String bucketId;
+        final String albumName;
+
+        private AlbumItem(String bucketId, String albumName) {
+            this.bucketId = bucketId;
+            this.albumName = albumName;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            AlbumItem albumItem = (AlbumItem) o;
+            return Objects.equals(bucketId, albumItem.bucketId) && Objects.equals(albumName, albumItem.albumName);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(bucketId, albumName);
         }
     }
 

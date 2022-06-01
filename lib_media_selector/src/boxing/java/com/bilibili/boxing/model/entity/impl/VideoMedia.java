@@ -117,9 +117,10 @@ public class VideoMedia extends BaseMedia {
     }
 
     public static class Builder {
-        private String mId;
+
+        private final String mId;
         private String mTitle;
-        private Uri mUri;
+        private final Uri mUri;
         private String mDuration;
         private String mSize;
         private String mDateTaken;
@@ -154,7 +155,6 @@ public class VideoMedia extends BaseMedia {
             this.mMimeType = type;
             return this;
         }
-
 
         public VideoMedia build() {
             return new VideoMedia(this);

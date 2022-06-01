@@ -98,7 +98,11 @@ public class StorageUtils {
     public static String addFilePostfix(final String filePath, String postfix) {
         if (isSpace(filePath)) return "";
         File file = new File(filePath);
-        return file.getParentFile().getAbsolutePath() + File.separator + getFileNameNoExtension(filePath) + postfix + "." + getFileExtension(filePath);
+        File parentFile = file.getParentFile();
+        if (parentFile == null) {
+            return "";
+        }
+        return parentFile.getAbsolutePath() + File.separator + getFileNameNoExtension(filePath) + postfix + "." + getFileExtension(filePath);
     }
 
 }
