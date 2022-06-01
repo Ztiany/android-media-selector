@@ -67,6 +67,8 @@ SystemMediaSelector 用于调用系统相机或 SAF 获取图片或文件。
 相关参考：
 
 - [官方文档：拍照](https://developer.android.com/training/camera/photobasics)
+- [官方文档：从共享存储空间访问文档和其他文件](https://developer.android.com/training/data-storage/shared/documents-files?hl=zh-cn)
+- [官方文档：Android 存储用例和最佳做法](https://developer.android.com/training/data-storage/use-cases?hl=zh-cn#capture-image-media)
 - [Android. How to capture image from camera and store it in server?](https://stackoverflow.com/questions/53645370/android-how-to-capture-image-from-camera-and-store-it-in-server)
 - [你需要知道的 Android 拍照适配方案](http://www.jianshu.com/p/f269bcda335f)
 - [Android 调用系统相机和相册-填坑篇](http://wuxiaolong.me/2016/05/24/Android-Photograph-Album2/)
