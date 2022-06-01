@@ -3,6 +3,8 @@ plugins {
     id "kotlin-android"
 }
 
+apply plugin: "com.vanniktech.maven.publish"
+
 android {
     compileSdkVersion 31
 
@@ -55,6 +57,7 @@ dependencies {
     /*imageLoader*/
     compileOnly "com.github.bumptech.glide:glide:4.13.0"
 
+    /*log*/
     implementation "com.jakewharton.timber:timber:4.7.1"
 
     /*image crop*/

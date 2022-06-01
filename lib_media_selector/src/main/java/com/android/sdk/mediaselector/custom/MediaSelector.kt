@@ -31,10 +31,10 @@ interface MediaSelector : ActivityStateHandler {
  */
 fun newMediaSelector(activity: AppCompatActivity, resultListener: ResultListener): MediaSelector {
     return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-        Timber.d("newSystemMediaSelector LegacySystemMediaSelector")
+        Timber.d("newMediaSelector LegacyMediaSelector")
         LegacyMediaSelector(activity, resultListener)
     } else {
-        Timber.d("newSystemMediaSelector AndroidPSystemMediaSelector")
+        Timber.d("newMediaSelector AndroidQMediaSelector")
         AndroidQMediaSelector(activity, resultListener)
     }.also {
         autoCallback(activity, it)
@@ -48,10 +48,10 @@ fun newMediaSelector(activity: AppCompatActivity, resultListener: ResultListener
  */
 fun newMediaSelector(fragment: Fragment, resultListener: ResultListener): MediaSelector {
     return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-        Timber.d("newSystemMediaSelector LegacySystemMediaSelector")
+        Timber.d("newMediaSelector LegacyMediaSelector")
         LegacyMediaSelector(fragment, resultListener)
     } else {
-        Timber.d("newSystemMediaSelectorAndroidPSystemMediaSelector")
+        Timber.d("newMediaSelector AndroidQMediaSelector")
         AndroidQMediaSelector(fragment, resultListener)
     }.also {
         autoCallback(fragment, it)

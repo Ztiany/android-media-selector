@@ -33,8 +33,11 @@ internal class AndroidQSystemMediaSelector : BaseSystemMediaSelector {
 
     constructor(fragment: Fragment, resultListener: ResultListener) : super(fragment, resultListener)
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Album
+    ///////////////////////////////////////////////////////////////////////////
     override fun doTakePhotoFormSystem(): Boolean {
-        return openASF(REQUEST_ALBUM, MediaUtils.MIMETYPE_IMAGE)
+        return openSAF(REQUEST_ALBUM, MediaUtils.MIMETYPE_IMAGE)
     }
 
     override fun processSystemPhotoResult(data: Intent?) {
@@ -57,7 +60,6 @@ internal class AndroidQSystemMediaSelector : BaseSystemMediaSelector {
         if (mCurrentInstruction.isCopyToInternal || mCurrentInstruction.needCrop()) {
 
             lifecycleOwner.lifecycleScope.launch {
-
                 val copied = withContext(Dispatchers.IO) {
                     copySingleToInternal(context, uri)
                 }
@@ -75,8 +77,11 @@ internal class AndroidQSystemMediaSelector : BaseSystemMediaSelector {
         mediaSelectorCallback.onTakeSuccess(listOf(uri))
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Files
+    ///////////////////////////////////////////////////////////////////////////
     override fun doTakeFile(): Boolean {
-        return openASF(REQUEST_FILE, MediaUtils.MIMETYPE_ALL)
+        return openSAF(REQUEST_FILE, MediaUtils.MIMETYPE_ALL)
     }
 
     override fun processFileResult(data: Intent?) {
@@ -93,7 +98,10 @@ internal class AndroidQSystemMediaSelector : BaseSystemMediaSelector {
         }
     }
 
-    private fun openASF(requestCode: Int, defaultType: String): Boolean {
+    ///////////////////////////////////////////////////////////////////////////
+    // Utils
+    ///////////////////////////////////////////////////////////////////////////
+    private fun openSAF(requestCode: Int, defaultType: String): Boolean {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, mCurrentInstruction.isMultiple)
@@ -120,6 +128,9 @@ internal class AndroidQSystemMediaSelector : BaseSystemMediaSelector {
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // copy
+    ///////////////////////////////////////////////////////////////////////////
     private fun copyToInternalAndReturn(clipData: ClipData) {
         lifecycleOwner.lifecycleScope.launch {
             withContext(Dispatchers.IO) {

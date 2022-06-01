@@ -41,10 +41,16 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun showResult(results: List<Uri>) {
+        if (takingFile) {
+            takingFile = false
+            return
+        }
         val intent = Intent(this, ResultActivity::class.java)
         intent.putParcelableArrayListExtra(KEY, ArrayList(results))
         startActivity(intent)
     }
+
+    private var takingFile = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,19 +107,55 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun selectOnePhotoWithCameraByMediaStore(view: View) {
-        mediaSelector.takePicture().accessMediaLocation().needCamera().start()
+        mediaSelector.takePicture().needMediaLocation().enableCamera().start()
     }
 
     fun selectOnePhotoWithCameraAndCropByMediaStore(view: View) {
-        mediaSelector.takePicture().accessMediaLocation().needCamera().defaultCrop().needGif().start()
+        mediaSelector.takePicture().needMediaLocation().enableCamera().crop().needGif().start()
     }
 
     fun selectMultiPhotoByMediaStore(view: View) {
-        mediaSelector.takePicture().accessMediaLocation().setCount(9).needGif().start()
+        mediaSelector.takePicture().needMediaLocation().count(9).needGif().start()
     }
 
     fun selectOneVideoByMediaStore(view: View) {
-        mediaSelector.takeVideo().accessMediaLocation().start()
+        mediaSelector.takeVideo().needMediaLocation().start()
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Photos by Intent or SDF
+    ///////////////////////////////////////////////////////////////////////////
+    fun captureOnePhoto(view: View) {
+        systemMediaSelector.takePhotoByCamera().start()
+    }
+
+    fun captureOnePhotoAndCrop(view: View) {
+        systemMediaSelector.takePhotoByCamera().crop().start()
+    }
+
+    fun selectOnePhoto(view: View) {
+        systemMediaSelector.takePhotoFromSystem().start()
+    }
+
+    fun selectOnePhotoAndCrop(view: View) {
+        systemMediaSelector.takePhotoFromSystem().crop().start()
+    }
+
+    fun selectPhotos(view: View) {
+        systemMediaSelector.takePhotoFromSystem().multiple(true).start()
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Files by Intent or SDF
+    ///////////////////////////////////////////////////////////////////////////
+    fun selectFile(view: View) {
+        takingFile = true
+        systemMediaSelector.takeFileFromSystem().start()
+    }
+
+    fun selectFiles(view: View) {
+        takingFile = true
+        systemMediaSelector.takeFileFromSystem().multiple(true).start()
     }
 
 }

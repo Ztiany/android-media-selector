@@ -47,8 +47,21 @@ public class Instruction implements Parcelable {
         mTakingType = takingType;
     }
 
-    public Instruction setCount(int count) {
-        notSupportForVideo("taking more than 1 items");
+    public boolean start() {
+        Timber.d("start()");
+        return mBaseMediaSelector.start(this);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // config
+    ///////////////////////////////////////////////////////////////////////////
+    public Instruction count(int count) {
+        if (count > 1) {
+            notSupportForVideo("taking more than 1 items");
+            notSupportForCrop("taking more than 1 items");
+            notSupportForCamera("taking more than 1 items", false);
+        }
+
         if (count > MAX_COUNT) {
             count = MAX_COUNT;
         }
@@ -56,9 +69,10 @@ public class Instruction implements Parcelable {
         return this;
     }
 
-    public Instruction needCamera() {
+    public Instruction enableCamera() {
         notSupportForVideo("camera");
         notSupportForMultiSelecting("camera", false);
+
         mNeedCamera = true;
         return this;
     }
@@ -69,22 +83,25 @@ public class Instruction implements Parcelable {
     }
 
     public Instruction needGif() {
+        notSupportForVideo("selecting gif");
+
         mNeedGif = true;
         return this;
     }
 
-    public Instruction defaultCrop() {
-        return customCrop(new CropOptions());
+    public Instruction crop() {
+        return crop(new CropOptions());
     }
 
-    public Instruction customCrop(CropOptions cropOptions) {
+    public Instruction crop(CropOptions cropOptions) {
         notSupportForMultiSelecting("cropping", true);
         notSupportForVideo("cropping");
+
         mCropOptions = cropOptions;
         return this;
     }
 
-    public Instruction setMediaFilter(MediaFilter mediaFilter) {
+    public Instruction mediaFilter(MediaFilter mediaFilter) {
         mMediaFilter = mediaFilter;
         return this;
     }
@@ -92,7 +109,7 @@ public class Instruction implements Parcelable {
     /**
      * 貌似使用内置相机拍照得到照片没有位置信息。
      */
-    public Instruction accessMediaLocation() {
+    public Instruction needMediaLocation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (ActivityCompat.checkSelfPermission(mBaseMediaSelector.getContext(), Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mNeedAccessMediaLocation = true;
@@ -103,22 +120,28 @@ public class Instruction implements Parcelable {
         return this;
     }
 
-    public MediaFilter getMediaFilter() {
-        return mMediaFilter;
-    }
-
     ///////////////////////////////////////////////////////////////////////////
-    // utils
+    // checker
     ///////////////////////////////////////////////////////////////////////////
-
-    public boolean start() {
-        Timber.d("start()");
-        return mBaseMediaSelector.start(this);
-    }
-
     private void notSupportForVideo(String action) {
         if (mTakingType == VIDEO) {
             throw new UnsupportedOperationException(action + " is not supported when taking Videos");
+        }
+    }
+
+    private void notSupportForCrop(String action) {
+        if (mCropOptions != null) {
+            throw new UnsupportedOperationException(action + " is not supported when cropping is enabled");
+        }
+    }
+
+    private void notSupportForCamera(String action, boolean crash) {
+        if (mNeedCamera) {
+            if (crash) {
+                throw new UnsupportedOperationException(action + " is not supported when camera is enabled");
+            } else {
+                Timber.e("%s is not supported properly when camera is enabled", action);
+            }
         }
     }
 
@@ -133,7 +156,7 @@ public class Instruction implements Parcelable {
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // for getting settings
+    // getter
     ///////////////////////////////////////////////////////////////////////////
 
     @Nullable
@@ -173,8 +196,12 @@ public class Instruction implements Parcelable {
         mBaseMediaSelector = baseMediaSelector;
     }
 
-    public boolean isNeedAccessMediaLocation() {
+    boolean isNeedAccessMediaLocation() {
         return mNeedAccessMediaLocation;
+    }
+
+    MediaFilter getMediaFilter() {
+        return mMediaFilter;
     }
 
     ///////////////////////////////////////////////////////////////////////////

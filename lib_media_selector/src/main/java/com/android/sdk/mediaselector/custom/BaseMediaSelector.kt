@@ -20,7 +20,7 @@ import com.ztiany.mediaselector.R
 import timber.log.Timber
 
 private const val REQUEST_BOXING = 10715;
-internal const val REQUEST_UCROP = 10716
+internal const val REQUEST_CROP = 10716
 private const val INSTRUCTOR_KEY = "custom_instructor_key"
 
 /**
@@ -120,7 +120,7 @@ internal abstract class BaseMediaSelector : MediaSelector {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Timber.d("onActivityResult() called with: requestCode = [$requestCode], resultCode = [$resultCode], data = [$data]")
-        if (requestCode != REQUEST_BOXING && requestCode != REQUEST_UCROP) {
+        if (requestCode != REQUEST_BOXING && requestCode != REQUEST_CROP) {
             return
         }
 
@@ -135,7 +135,7 @@ internal abstract class BaseMediaSelector : MediaSelector {
 
         if (requestCode == REQUEST_BOXING) {
             handleResult(data)
-        } else if (requestCode == REQUEST_UCROP) {
+        } else if (requestCode == REQUEST_CROP) {
             processCropResult(data)
         }
     }
@@ -183,7 +183,7 @@ internal abstract class BaseMediaSelector : MediaSelector {
             actFragWrapper.fragment,
             src,
             currentInstruction.cropOptions,
-            REQUEST_UCROP
+            REQUEST_CROP
         )
     }
 

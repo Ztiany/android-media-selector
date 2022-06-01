@@ -1,6 +1,8 @@
 # Lib Media Selector
 
-Android 多媒体文件选择库，支持 `target api = 31`。
+Android 多媒体文件选择库，支持 **`target api = 31`**。
+
+[](media-selector.jpg)
 
 ## 1 支持应用内多媒体文件选择
 
@@ -26,17 +28,11 @@ boxing 库存在以下问题：
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-
     <files-path name="app_internal" path="/" />
-
     <cache-path name="app_internal_cache" path="/" />
-
     <external-cache-path name="app_external_cache" path="/" />
-
     <external-files-path name="app_external" path="/" />
-
     <external-path name="app_external" path="/" />
-
 </paths>
 ```
 
@@ -91,7 +87,7 @@ SystemMediaSelector 用于调用系统相机或 SAF 获取图片或文件。
 
 ## 4 Usage
 
-查看 Demo
+参考 Demo
 
 ## 5 Installation
 

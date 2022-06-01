@@ -16,7 +16,7 @@ import java.io.File
 internal const val REQUEST_CAMERA = 10711
 internal const val REQUEST_ALBUM = 10712
 internal const val REQUEST_FILE = 10713
-internal const val REQUEST_UCROP = 10714
+internal const val REQUEST_CROP = 10714
 
 private const val INSTRUCTOR_KEY = "system_instructor_key"
 
@@ -75,9 +75,7 @@ internal abstract class BaseSystemMediaSelector : SystemMediaSelector {
     // Result
     ///////////////////////////////////////////////////////////////////////////
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode != REQUEST_CAMERA && requestCode != REQUEST_ALBUM &&
-            requestCode != REQUEST_FILE && requestCode != REQUEST_UCROP
-        ) {
+        if (requestCode != REQUEST_CAMERA && requestCode != REQUEST_ALBUM && requestCode != REQUEST_FILE && requestCode != REQUEST_CROP) {
             return
         }
 
@@ -91,25 +89,24 @@ internal abstract class BaseSystemMediaSelector : SystemMediaSelector {
             REQUEST_CAMERA -> processCameraResult()
             REQUEST_ALBUM -> processSystemPhotoResult(data)
             REQUEST_FILE -> processFileResult(data)
-            REQUEST_UCROP -> processUCropResult(data)
+            REQUEST_CROP -> processCropResult(data)
         }
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Crop
     ///////////////////////////////////////////////////////////////////////////
-
     protected fun toCrop(src: String) {
         MediaUtils.toUCrop(
             actFragWrapper.context,
             actFragWrapper.fragment,
             src,
             mCurrentInstruction.cropOptions,
-            REQUEST_UCROP
+            REQUEST_CROP
         )
     }
 
-    private fun processUCropResult(data: Intent?) {
+    private fun processCropResult(data: Intent?) {
         val uCropResult = MediaUtils.getUCropResult(data)
         Timber.d("processCameraResult() called with: resultCode = [], data = [$uCropResult]")
         if (uCropResult == null) {
@@ -128,8 +125,7 @@ internal abstract class BaseSystemMediaSelector : SystemMediaSelector {
     ///////////////////////////////////////////////////////////////////////////
     // Camera
     ///////////////////////////////////////////////////////////////////////////
-
-    override fun takePhotoFromCamera(): Instruction {
+    override fun takePhotoByCamera(): Instruction {
         return Instruction(this, Instruction.CAMERA)
     }
 
@@ -174,7 +170,6 @@ internal abstract class BaseSystemMediaSelector : SystemMediaSelector {
     ///////////////////////////////////////////////////////////////////////////
     // Album
     ///////////////////////////////////////////////////////////////////////////
-
     override fun takePhotoFromSystem(): Instruction {
         return Instruction(this, Instruction.ALBUM)
     }
@@ -191,7 +186,6 @@ internal abstract class BaseSystemMediaSelector : SystemMediaSelector {
     ///////////////////////////////////////////////////////////////////////////
     // File
     ///////////////////////////////////////////////////////////////////////////
-
     override fun takeFileFromSystem(): Instruction {
         return Instruction(this, Instruction.FILE)
     }
