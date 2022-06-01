@@ -1,0 +1,63 @@
+plugins {
+    id "com.android.library"
+    id "kotlin-android"
+}
+
+android {
+    compileSdkVersion 31
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0.1"
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs += "src/github/java"
+            res.srcDirs += "src/github/res"
+            java.srcDirs += "src/boxing/java"
+            res.srcDirs += "src/boxing/res"
+            java.srcDirs += "src/boxing-impl/java"
+            res.srcDirs += "src/boxing-impl/res"
+        }
+    }
+
+}
+
+dependencies {
+    //androidx
+    implementation "androidx.appcompat:appcompat:1.4.1"
+    implementation "com.google.android.material:material:1.6.1"
+    implementation "androidx.documentfile:documentfile:1.0.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
+
+    //foundation
+    compileOnly 'io.github.ztiany:android-arch-delegate:1.0.0'
+
+    /*imageLoader*/
+    implementation "com.github.bumptech.glide:glide:4.11.0"
+    implementation "com.jakewharton.timber:timber:4.7.1"
+
+    /*image crop*/
+    implementation("com.github.yalantis:ucrop:2.2.8") {
+        exclude group: "com.squareup.okhttp3"
+    }
+}
