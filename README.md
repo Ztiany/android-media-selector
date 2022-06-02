@@ -8,7 +8,7 @@ Android 多媒体文件选择库，支持 **`target api = 31`**。
 
 ### 基于 boxing 封装
 
-由于 boxing 内部存在一些 bug，且官方不再维护，后改为本地依赖并对 bug 进行了修复。
+由于 boxing 内部存在一些 bug，且官方不再维护，这里对 bug 进行了修复。
 
 boxing 库存在以下问题：
 
@@ -60,9 +60,9 @@ SystemMediaSelector 用于调用系统相机或 SAF 获取图片或文件。
 
 需要考虑的问题：
 
-1. Android 7.0 默认启动严苛模式对`file:`类 Uri 的限制。
+1. Android 7.0 默认启动严苛模式。
 2. 获取的图片方向问题，需要通过 exif 修正。
-3. 系统返回的不是 file 路径，而是其他类型的uri，需要通过相关方法转换。
+3. 系统返回的不是 file 路径，而是其他类型的 uri，需要通过相关方法转换。
 
 相关参考：
 
@@ -89,7 +89,98 @@ SystemMediaSelector 用于调用系统相机或 SAF 获取图片或文件。
 
 ## 4 Usage
 
-参考 Demo
+```kotlin
+class MainActivity : AppCompatActivity() {
+
+    private val systemMediaSelector by lazy {
+        newSystemMediaSelector(this, object : ResultListener {
+            override fun onTakeSuccess(result: List<Uri>) {
+                result.forEach {
+                    Timber.e(it.toString())
+                }
+                showResult(result)
+            }
+        })
+    }
+
+    private val mediaSelector by lazy {
+        newMediaSelector(this, object : ResultListener {
+            override fun onTakeSuccess(result: List<Uri>) {
+                result.forEach {
+                    Timber.e(it.toString())
+                }
+                showResult(result)
+            }
+        })
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        systemMediaSelector.onRestoreInstanceState(savedInstanceState)
+        mediaSelector.onRestoreInstanceState(savedInstanceState)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        systemMediaSelector.onSaveInstanceState(outState)
+        mediaSelector.onSaveInstanceState(outState)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        systemMediaSelector.onActivityResult(requestCode, resultCode, data)
+        mediaSelector.onActivityResult(requestCode, resultCode, data)
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // MediaStore
+    ///////////////////////////////////////////////////////////////////////////
+    fun selectOnePhotoByMediaStore(view: View) {
+        mediaSelector.takePicture().start()
+    }
+
+    fun selectOnePhotoWithCameraByMediaStore(view: View) {
+        mediaSelector.takePicture().needMediaLocation().enableCamera().start()
+    }
+
+    fun selectOnePhotoWithCameraAndCropByMediaStore(view: View) {
+        mediaSelector.takePicture().needMediaLocation().enableCamera().crop().needGif().start()
+    }
+
+    fun selectMultiPhotoByMediaStore(view: View) {
+        mediaSelector.takePicture().needMediaLocation().count(9).needGif().start()
+    }
+
+    fun selectOneVideoByMediaStore(view: View) {
+        mediaSelector.takeVideo().needMediaLocation().start()
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Photos by Intent or SDF
+    ///////////////////////////////////////////////////////////////////////////
+    fun captureOnePhoto(view: View) {
+        systemMediaSelector.takePhotoByCamera().start()
+    }
+
+    fun captureOnePhotoAndCrop(view: View) {
+        systemMediaSelector.takePhotoByCamera().crop().start()
+    }
+
+    fun selectOnePhoto(view: View) {
+        systemMediaSelector.takePhotoFromSystem().start()
+    }
+
+    fun selectOnePhotoAndCrop(view: View) {
+        systemMediaSelector.takePhotoFromSystem().crop().start()
+    }
+
+    fun selectPhotos(view: View) {
+        systemMediaSelector.takePhotoFromSystem().multiple(true).start()
+    }
+
+   ...
+
+```
 
 ## 5 Installation
 
