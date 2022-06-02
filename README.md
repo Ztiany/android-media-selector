@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Photos by Intent or SDF
+    // Photos by Intent or SAF
     ///////////////////////////////////////////////////////////////////////////
     fun captureOnePhoto(view: View) {
         systemMediaSelector.takePhotoByCamera().start()
@@ -180,6 +180,7 @@ class MainActivity : AppCompatActivity() {
 
    ...
 
+}
 ```
 
 ## 5 Installation
