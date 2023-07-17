@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="me.ztiany.media.selector.example">
 
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+
+    <!--TODO：适配 Android 13 的权限变更-->
 
     <application
         android:icon="@mipmap/ic_launcher"
