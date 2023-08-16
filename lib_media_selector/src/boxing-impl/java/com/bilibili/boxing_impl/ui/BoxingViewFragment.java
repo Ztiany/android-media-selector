@@ -112,27 +112,6 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
         loadAlbum();
     }
 
-    @Override
-    public void onRequestPermissionError(String[] permissions, Exception e) {
-        if (permissions.length > 0) {
-            if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                Toast.makeText(getContext(), R.string.boxing_storage_permission_deny, Toast.LENGTH_SHORT).show();
-                showEmptyData();
-            } else if (permissions[0].equals(Manifest.permission.CAMERA)) {
-                Toast.makeText(getContext(), R.string.boxing_camera_permission_deny, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionSuc(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (permissions[0].equals(STORAGE_PERMISSIONS[0])) {
-            startLoading();
-        } else if (permissions[0].equals(CAMERA_PERMISSIONS[0])) {
-            startCamera(getActivity(), this, null);
-        }
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

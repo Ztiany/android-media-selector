@@ -6,11 +6,11 @@ plugins {
 apply plugin: "com.vanniktech.maven.publish"
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0.1"
     }
@@ -43,19 +43,19 @@ android {
 
 dependencies {
     //androidx
-    implementation "androidx.appcompat:appcompat:1.4.1"
-    implementation "com.google.android.material:material:1.6.1"
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "com.google.android.material:material:1.9.0"
     implementation "androidx.documentfile:documentfile:1.0.1"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.0"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.20"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
 
     //foundation
-    compileOnly 'io.github.ztiany:android-arch-delegate:1.0.0'
+    compileOnly 'io.github.ztiany:android-arch-delegate:1.0.5'
 
     /*imageLoader*/
-    compileOnly "com.github.bumptech.glide:glide:4.13.0"
+    compileOnly "com.github.bumptech.glide:glide:4.15.1"
 
     /*log*/
     implementation "com.jakewharton.timber:timber:4.7.1"

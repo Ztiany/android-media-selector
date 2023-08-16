@@ -20,8 +20,9 @@ class MainActivity : AppCompatActivity() {
     private val systemMediaSelector by lazy {
         newSystemMediaSelector(this, object : ResultListener {
             override fun onTakeSuccess(result: List<Uri>) {
+                Timber.e("results :$result")
                 result.forEach {
-                    Timber.e(it.toString())
+                    Timber.e("result :$it")
                 }
                 showResult(result)
             }
@@ -31,8 +32,9 @@ class MainActivity : AppCompatActivity() {
     private val mediaSelector by lazy {
         newMediaSelector(this, object : ResultListener {
             override fun onTakeSuccess(result: List<Uri>) {
+                Timber.e("results :$result")
                 result.forEach {
-                    Timber.e(it.toString())
+                    Timber.e("result :$it")
                 }
                 showResult(result)
             }
@@ -63,9 +65,14 @@ class MainActivity : AppCompatActivity() {
     // Support
     ///////////////////////////////////////////////////////////////////////////
     private fun askNecessaryPermissions() {
-        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Timber.d("Build.VERSION_CODES.TIRAMISU")
+            arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.ACCESS_MEDIA_LOCATION)
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Timber.d("Build.VERSION_CODES.Q")
             arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_MEDIA_LOCATION)
         } else {
+            Timber.d("Build.VERSION_CODES.OLD")
             arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
 

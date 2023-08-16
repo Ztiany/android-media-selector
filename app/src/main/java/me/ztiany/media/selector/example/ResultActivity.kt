@@ -2,6 +2,7 @@ package me.ztiany.media.selector.example
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -23,7 +24,9 @@ class ResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
 
-        val list = intent.getStringArrayListExtra(KEY) ?: emptyList<Uri>()
+        val list = intent.getParcelableArrayListExtra(KEY) ?: emptyList<Uri>()
+
+        Timber.d("list: $list")
 
         val rv = findViewById<RecyclerView>(R.id.rv_result)
         PagerSnapHelper().attachToRecyclerView(rv)
@@ -63,6 +66,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun showMediaInfo(uri: Uri, stream: InputStream?) {
+        Timber.d("showMediaInfo() called with: uri = $uri, stream = $stream")
         stream?.use {
             ExifInterface(stream).run {
                 val latLong = latLong ?: doubleArrayOf(0.0, 0.0)

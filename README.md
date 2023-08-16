@@ -1,6 +1,6 @@
 # Lib Media Selector
 
-Android 多媒体文件选择库，支持 **`target api = 31`**。
+Android 多媒体文件选择库，支持 **`target api = 33`** 【调用 API 之前，请保证相关的权限均已获取】。
 
 ![](media-selector.jpg)
 
@@ -178,7 +178,7 @@ class MainActivity : AppCompatActivity() {
         systemMediaSelector.takePhotoFromSystem().multiple(true).start()
     }
 
-   ...
+    ...
 
 }
 ```
@@ -186,5 +186,5 @@ class MainActivity : AppCompatActivity() {
 ## 5 Installation
 
 ```groovy
-implementation 'io.github.ztiany:android-media-selector:1.1.0'
+implementation 'io.github.ztiany:android-media-selector:1.1.1'
 ```

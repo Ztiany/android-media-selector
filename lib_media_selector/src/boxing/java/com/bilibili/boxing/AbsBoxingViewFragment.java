@@ -60,15 +60,6 @@ import timber.log.Timber;
  */
 public abstract class AbsBoxingViewFragment extends Fragment implements PickerContract.View {
 
-    public static final String[] STORAGE_PERMISSIONS = {
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-    };
-
-    public static final String[] CAMERA_PERMISSIONS = {Manifest.permission.CAMERA};
-
-    private static final int REQUEST_CODE_PERMISSION = 233;
-
     private PickerContract.Presenter mPresenter;
     private CameraPickerHelper mCameraPicker;
     private Boxing.OnBoxingFinishListener mOnFinishListener;
@@ -78,20 +69,6 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
      * call {@link #loadMedias()} or {@link #loadMedias(int, String)}, call {@link #loadAlbum()} if albums needed.
      */
     public abstract void startLoading();
-
-    /**
-     * called when request {@link Manifest.permission#WRITE_EXTERNAL_STORAGE} and {@link Manifest.permission#CAMERA} permission error.
-     *
-     * @param e a IllegalArgumentException, IllegalStateException or SecurityException will be throw
-     */
-    public void onRequestPermissionError(String[] permissions, Exception e) {
-    }
-
-    /**
-     * called when request {@link Manifest.permission#WRITE_EXTERNAL_STORAGE} and {@link Manifest.permission#CAMERA} permission successfully.
-     */
-    public void onRequestPermissionSuc(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    }
 
     /**
      * get the result of using camera to take a photo.
@@ -187,28 +164,7 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
     }
 
     private void checkPermissionAndLoad() {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    && ContextCompat.checkSelfPermission(requireContext(), STORAGE_PERMISSIONS[0]) != PERMISSION_GRANTED
-                    && ContextCompat.checkSelfPermission(requireContext(), STORAGE_PERMISSIONS[1]) != PERMISSION_GRANTED) {
-                requestPermissions(STORAGE_PERMISSIONS, REQUEST_CODE_PERMISSION);
-            } else {
-                startLoading();
-            }
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            onRequestPermissionError(STORAGE_PERMISSIONS, e);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (REQUEST_CODE_PERMISSION == requestCode) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                onRequestPermissionSuc(requestCode, permissions, grantResults);
-            } else {
-                onRequestPermissionError(permissions, new SecurityException("request android.permission.READ_EXTERNAL_STORAGE error."));
-            }
-        }
+        startLoading();
     }
 
     /**
@@ -397,16 +353,8 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
      * @param subFolderPath the folder name in "DCIM/bili/boxing/"
      */
     public final void startCamera(Activity activity, Fragment fragment, String subFolderPath) {
-        try {
-            if (ContextCompat.checkSelfPermission(requireContext(), CAMERA_PERMISSIONS[0]) != PERMISSION_GRANTED) {
-                requestPermissions(CAMERA_PERMISSIONS, REQUEST_CODE_PERMISSION);
-            } else {
-                if (!BoxingManager.getInstance().getBoxingConfig().isVideoMode()) {
-                    mCameraPicker.startCamera(activity, fragment, subFolderPath);
-                }
-            }
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            onRequestPermissionError(CAMERA_PERMISSIONS, e);
+        if (!BoxingManager.getInstance().getBoxingConfig().isVideoMode()) {
+            mCameraPicker.startCamera(activity, fragment, subFolderPath);
         }
     }
 

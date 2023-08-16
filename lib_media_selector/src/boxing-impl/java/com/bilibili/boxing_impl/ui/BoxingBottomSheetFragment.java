@@ -178,23 +178,6 @@ public class BoxingBottomSheetFragment extends AbsBoxingViewFragment implements 
     }
 
     @Override
-    public void onRequestPermissionError(String[] permissions, Exception e) {
-        if (permissions.length > 0) {
-            if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                showEmptyData();
-                Toast.makeText(getContext(), R.string.boxing_storage_permission_deny, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionSuc(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (permissions[0].equals(STORAGE_PERMISSIONS[0])) {
-            startLoading();
-        }
-    }
-
-    @Override
     public void clearMedia() {
         mMediaAdapter.clearData();
     }
