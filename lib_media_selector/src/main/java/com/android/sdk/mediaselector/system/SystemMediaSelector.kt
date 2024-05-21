@@ -14,7 +14,7 @@ import com.android.sdk.mediaselector.common.autoCallback
 import timber.log.Timber
 
 /**
- * 通过系统相机或者系统 SAF 获取照片、文件。
+ *  Get photos and files through the system camera or SAF.
  *
  * @author Ztiany
  */
@@ -48,7 +48,7 @@ fun newSystemMediaSelector(activity: AppCompatActivity, resultListener: ResultLi
 /**
  * If your fragment has implemented [FragmentDelegateOwner], you don't call methods in [ActivityStateHandler].
  *
- *@author Ztiany
+ *@author Ztiany.
  */
 fun newSystemMediaSelector(fragment: Fragment, resultListener: ResultListener): SystemMediaSelector {
     return if (Build.VERSION.SDK_INT < 29 || MediaSelectorConfiguration.isForceUseLegacyApi()) {

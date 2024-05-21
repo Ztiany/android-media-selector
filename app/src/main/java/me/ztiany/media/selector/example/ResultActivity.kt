@@ -37,7 +37,7 @@ class ResultActivity : AppCompatActivity() {
                 imageView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                 imageView.scaleType = ImageView.ScaleType.CENTER_CROP
                 imageView.setOnClickListener {
-                    (it.tag as? Uri)?.let(::showMediaInfoChecked)
+                    (it.tag as Uri).let(::showMediaInfoChecked)
                 }
                 return object : RecyclerView.ViewHolder(imageView) {}
             }
@@ -55,11 +55,20 @@ class ResultActivity : AppCompatActivity() {
 
     private fun showMediaInfoChecked(uri: Uri) {
         if (uri.toString().startsWith("content://")) {
-            showMediaInfo(uri, contentResolver.openInputStream(uri))
+            val stream = contentResolver.openInputStream(uri)
+            if (stream == null) {
+                Timber.d("showMediaInfo, protocol is content, but openInputStream failed.")
+            }else{
+                Timber.d("showMediaInfo, protocol is content, but openInputStream succeeded.")
+                showMediaInfo(uri, stream)
+            }
         } else {
-            uri.path?.let {
-                val file = File(it)
-                Timber.d("showMediaInfoChecked file exist = ${file.exists()}")
+            val path = uri.path
+            if (path.isNullOrEmpty()) {
+                Timber.d("showMediaInfo, protocol is file, but path is null.")
+            }else{
+                val file = File(path)
+                Timber.d("showMediaInfo, protocol is file, file exist = ${file.exists()}")
                 showMediaInfo(uri, file.inputStream())
             }
         }

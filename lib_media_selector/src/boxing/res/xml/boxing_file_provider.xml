@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~  Copyright (C) 2017 Bilibili
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,10 +14,11 @@
   ~ limitations under the License.
   ~
   -->
-
 <paths>
-    <cache-path name="internal" path="boxing" />
-
-    <external-path name="external" path="DCIM/bili/boxing" />
-
+    <cache-path
+        name="internal"
+        path="boxing" />
+    <external-path
+        name="external"
+        path="DCIM/bili/boxing" />
 </paths>

@@ -11,6 +11,8 @@ import com.android.sdk.mediaselector.common.autoCallback
 import timber.log.Timber
 
 /**
+ * Get photos and videos through MediaStore API.
+ *
  * If your activity has implemented [ActivityDelegateOwner], you don't call methods in [ActivityStateHandler].
  * And the same if your fragment has implemented [FragmentDelegateOwner].
  *

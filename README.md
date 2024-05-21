@@ -1,6 +1,13 @@
 # Lib Media Selector
 
-Android 多媒体文件选择库，支持 **`target api = 33`** 【调用 API 之前，请保证相关的权限均已获取】。
+Android 多媒体文件选择库（图片与视频），支持 **`target api = 33`**。
+
+ToDo：
+
+- 内置权限支持；
+- 支持视频预览；
+- 支持单选图片预览；
+- 支持 `target api = 34` Grant partial access to photos and videos 交互；
 
 ![](media-selector.jpg)
 
@@ -39,7 +46,6 @@ boxing 库存在以下问题：
 - manifest
 
 ```xml
-
 <provider android:name="androidx.core.content.FileProvider"
     android:authorities="${applicationId}.file.provider" android:exported="false"
     android:grantUriPermissions="true">

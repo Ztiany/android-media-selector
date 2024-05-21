@@ -132,6 +132,7 @@ internal abstract class BaseSystemMediaSelector : SystemMediaSelector {
     fun takePhotoFromCamera(instruction: Instruction): Boolean {
         mCurrentInstruction = instruction
         if (!MediaUtils.hasCamera(context)) {
+            Timber.w("The device has no camera apps.")
             return false
         }
         val targetFile = File(instruction.cameraPhotoSavePath)
@@ -140,7 +141,7 @@ internal abstract class BaseSystemMediaSelector : SystemMediaSelector {
             startActivityForResult(intent, REQUEST_CAMERA)
             return true
         } catch (e: Exception) {
-            Timber.d(e, "takePhotoFromCamera error")
+            Timber.e(e, "takePhotoFromCamera error")
         }
         return false
     }

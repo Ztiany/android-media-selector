@@ -7,6 +7,7 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.TypedValue;
 
+import com.android.sdk.mediaselector.permission.MediaAccessPermission;
 import com.bilibili.boxing.BoxingMediaLoader;
 import com.bilibili.boxing.loader.IBoxingMediaLoader;
 import com.bilibili.boxing.utils.BoxingFileHelper;
@@ -19,6 +20,8 @@ public class MediaSelectorConfiguration {
 
     private static String sAuthority = "";
     private static boolean sForceUseLegacyApi = false;
+
+    private static MediaAccessPermission sMediaAccessPermission;
 
     /**
      * @see <a href='https://stackoverflow.com/questions/27611173/how-to-get-accent-color-programmatically'>how-to-get-accent-color-programmatically</>
@@ -38,9 +41,7 @@ public class MediaSelectorConfiguration {
     }
 
     /**
-     * 默认的 authority 为 "包名.fileProvider"
-     *
-     * @param authority 指定FileProvider的authority
+     * The default authority is "package-name.fileProvider".
      */
     public static void setAuthority(String authority) {
         sAuthority = authority;

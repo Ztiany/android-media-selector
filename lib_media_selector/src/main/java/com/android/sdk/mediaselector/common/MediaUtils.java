@@ -42,13 +42,13 @@ public class MediaUtils {
     /**
      * 判断系统中是否存在可以启动的相机应用
      *
-     * @return 存在返回true，不存在返回false
+     * @return 存在返回 true，不存在返回 false。
      */
     public static boolean hasCamera(Context context) {
         PackageManager packageManager = context.getPackageManager();
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        return list.size() > 0;
+        return !list.isEmpty();
     }
 
     /**
