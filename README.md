@@ -1,31 +1,23 @@
 # Lib Media Selector
 
-Android 多媒体文件选择库（图片与视频），支持 **`target api = 33`**。
+Android 媒体文件选择库（图片与视频），支持 **`target api = 33`**。
 
-ToDo：
+TODO：
 
 - 内置权限支持；
 - 支持视频预览；
 - 支持单选图片预览；
-- 支持 `target api = 34` Grant partial access to photos and videos 交互；
+- 支持 `API 34` Grant partial access to photos and videos 交互。
 
 ![](media-selector.jpg)
 
-## 1 支持应用内多媒体文件选择
+## 1 支持应用内媒体文件选择
 
-### 基于 boxing 封装
-
-由于 boxing 内部存在一些 bug，且官方不再维护，这里对 bug 进行了修复。
-
-boxing 库存在以下问题：
+基于 boxing 封装，由于 [boxing](https://github.com/bilibili/boxing) 官方不再维护，这里对相关问题进行了修复。包括：
 
 1. [RotatePhotoView](https://github.com/ChenSiLiang/RotatePhotoView) 依赖混乱导致的崩溃。
-2. [Android 10 SQLiteException](https://github.com/bilibili/boxing/issues/154)
-   崩溃问题，解决方案可以参考  [replacement-for-group-by-in-contentresolver-query-in-android-q-android-10-a](https://stackoverflow.com/questions/60623594/replacement-for-group-by-in-contentresolver-query-in-android-q-android-10-a)
-   和 [https://stackoverflow.com/questions/56823336/query-mediastore-on-android-q](https://stackoverflow.com/questions/56823336/query-mediastore-on-android-q)
-   。
-3. Android 11 invalid token
-   limit，解决方案可以参考 [limiting-number-of-rows-in-a-contentresolver-query-function](https://stackoverflow.com/questions/10390577/limiting-number-of-rows-in-a-contentresolver-query-function)
+2. [Android 10 SQLiteException](https://github.com/bilibili/boxing/issues/154) 崩溃问题，解决方案可以参考  [replacement-for-group-by-in-contentresolver-query-in-android-q-android-10-a](https://stackoverflow.com/questions/60623594/replacement-for-group-by-in-contentresolver-query-in-android-q-android-10-a) 和 [https://stackoverflow.com/questions/56823336/query-mediastore-on-android-q](https://stackoverflow.com/questions/56823336/query-mediastore-on-android-q)。
+3. Android 11 invalid token limit，解决方案可以参考 [limiting-number-of-rows-in-a-contentresolver-query-function](https://stackoverflow.com/questions/10390577/limiting-number-of-rows-in-a-contentresolver-query-function)
 4. 没有适配 Android 10 的 ScopedStorage。
 
 另外，使用时需要配置好 FileProvider：
@@ -54,8 +46,9 @@ boxing 库存在以下问题：
 </provider>
 ```
 
-### 其他可选方案
+除了 boxing，也可以考虑其他方案：
 
+- [Matisse](https://github.com/leavesCZY/Matisse) (JetpackCompose)
 - [EasyPhotos](https://github.com/HuanTanSheng/EasyPhotos)
 - [PictureSelector](https://github.com/LuckSiege/PictureSelector)
 - [ImageSelector](https://github.com/smuyyh/ImageSelector)
@@ -66,7 +59,7 @@ SystemMediaSelector 用于调用系统相机或 SAF 获取图片或文件。
 
 需要考虑的问题：
 
-1. Android 7.0 默认启动严苛模式。
+1. Android 7.0 之后，需要适配 FileProvider。
 2. 获取的图片方向问题，需要通过 exif 修正。
 3. 系统返回的不是 file 路径，而是其他类型的 uri，需要通过相关方法转换。
 
@@ -84,14 +77,13 @@ SystemMediaSelector 用于调用系统相机或 SAF 获取图片或文件。
 
 ## 3 支持图片裁剪
 
-使用系统裁剪时发现不同设备厂商以及不同系统版本之间有这样那样的问题，于是决定内置图片裁剪库，可选裁剪库有：
+使用系统裁剪时发现不同设备厂商以及不同系统版本之间有行为不一致的问题，于是内置了第三方图片裁剪库 [uCrop](https://github.com/Yalantis/uCrop)。
 
-- [uCrop](https://github.com/Yalantis/uCrop)
-- [smartCropper](https://github.com/pqpo/SmartCropper)
-- [simpleCropper](https://github.com/igreenwood/SimpleCropView)
+其他可选裁剪库有：
+
+- [SmartCropper](https://github.com/pqpo/SmartCropper)
+- [SimpleCropper](https://github.com/igreenwood/SimpleCropView)
 - [Android-Image-Cropper](https://github.com/ArthurHub/Android-Image-Cropper)
-
-目前采用的是 uCrop。
 
 ## 4 Usage
 
