@@ -2,7 +2,7 @@ package com.bilibili.boxing_impl;
 
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.callback.MediaFilter;
-import com.ztiany.mediaselector.R;
+import com.android.sdk.mediaselector.R;
 
 import androidx.annotation.DrawableRes;
 

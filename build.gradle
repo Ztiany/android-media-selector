@@ -18,21 +18,13 @@ buildscript {
 allprojects {
 
     repositories {
-        mavenCentral()
-        google()
         maven { url "https://maven.aliyun.com/repository/central" }
         maven { url "https://maven.aliyun.com/repository/public" }
         maven { url "https://maven.aliyun.com/repository/google" }
         maven { url "https://dl.google.com/dl/android/maven2/" }
         maven { url "https://www.jitpack.io" }
-        maven { url "https://kotlin.bintray.com/kotlinx" }
-        maven { url "https://dl.bintray.com/umsdk/release" }
-    }
-
-    plugins.withId("com.vanniktech.maven.publish") {
-        mavenPublish {
-            sonatypeHost = "S01"
-        }
+        google()
+        mavenCentral()
     }
 
 }

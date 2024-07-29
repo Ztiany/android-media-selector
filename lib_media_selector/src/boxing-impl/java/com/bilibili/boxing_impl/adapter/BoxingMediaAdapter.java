@@ -29,7 +29,7 @@ import com.bilibili.boxing.model.entity.BaseMedia;
 import com.bilibili.boxing.model.entity.impl.ImageMedia;
 import com.bilibili.boxing_impl.BoxingResHelper;
 import com.bilibili.boxing_impl.view.MediaItemLayout;
-import com.ztiany.mediaselector.R;
+import com.android.sdk.mediaselector.R;
 
 import java.util.ArrayList;
 import java.util.List;

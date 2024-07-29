@@ -31,7 +31,7 @@ import com.bilibili.boxing.BoxingMediaLoader;
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.impl.ImageMedia;
-import com.ztiany.mediaselector.R;
+import com.android.sdk.mediaselector.R;
 
 import org.jetbrains.annotations.NotNull;
 

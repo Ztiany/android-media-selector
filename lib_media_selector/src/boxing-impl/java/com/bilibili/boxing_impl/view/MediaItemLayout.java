@@ -34,7 +34,7 @@ import com.bilibili.boxing.model.entity.impl.ImageMedia;
 import com.bilibili.boxing.model.entity.impl.VideoMedia;
 import com.bilibili.boxing_impl.BoxingResHelper;
 import com.bilibili.boxing_impl.WindowManagerHelper;
-import com.ztiany.mediaselector.R;
+import com.android.sdk.mediaselector.R;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;

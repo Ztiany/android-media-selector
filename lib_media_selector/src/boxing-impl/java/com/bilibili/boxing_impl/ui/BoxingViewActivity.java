@@ -34,7 +34,7 @@ import com.bilibili.boxing.model.entity.impl.ImageMedia;
 import com.bilibili.boxing.model.task.IMediaTask;
 import com.bilibili.boxing_impl.BoxingResHelper;
 import com.bilibili.boxing_impl.view.HackyViewPager;
-import com.ztiany.mediaselector.R;
+import com.android.sdk.mediaselector.R;
 
 import org.jetbrains.annotations.NotNull;
 

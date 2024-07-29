@@ -35,7 +35,7 @@ import com.bilibili.boxing.utils.BoxingFileHelper;
 import com.bilibili.boxing_impl.adapter.BoxingMediaAdapter;
 import com.bilibili.boxing_impl.view.HackyGridLayoutManager;
 import com.bilibili.boxing_impl.view.SpacesItemDecoration;
-import com.ztiany.mediaselector.R;
+import com.android.sdk.mediaselector.R;
 
 import org.jetbrains.annotations.NotNull;
 

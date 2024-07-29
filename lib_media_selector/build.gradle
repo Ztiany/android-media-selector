@@ -1,9 +1,8 @@
 plugins {
     id "com.android.library"
     id "kotlin-android"
+    id "kotlin-parcelize"
 }
-
-apply plugin: "com.vanniktech.maven.publish"
 
 android {
     compileSdk 34
@@ -32,10 +31,15 @@ android {
         main {
             java.srcDirs += "src/github/java"
             res.srcDirs += "src/github/res"
+
             java.srcDirs += "src/boxing/java"
             res.srcDirs += "src/boxing/res"
+
             java.srcDirs += "src/boxing-impl/java"
             res.srcDirs += "src/boxing-impl/res"
+
+            java.srcDirs += "src/image-loader/java"
+            res.srcDirs += "src/image-loader/res"
         }
     }
 
@@ -54,13 +58,13 @@ dependencies {
     //foundation
     compileOnly 'io.github.ztiany:android-arch-delegate:1.0.5'
 
-    /*imageLoader*/
+    //imageLoader
     compileOnly "com.github.bumptech.glide:glide:4.15.1"
 
-    /*log*/
+    //log
     implementation "com.jakewharton.timber:timber:4.7.1"
 
-    /*image crop*/
+    //image crop
     implementation("com.github.yalantis:ucrop:2.2.8") {
         exclude group: "com.squareup.okhttp3"
     }

@@ -31,7 +31,7 @@ import com.bilibili.boxing.AbsBoxingViewActivity;
 import com.bilibili.boxing.loader.IBoxingCallback;
 import com.bilibili.boxing.model.entity.impl.ImageMedia;
 import com.bilibili.boxing.utils.BoxingLog;
-import com.ztiany.mediaselector.R;
+import com.android.sdk.mediaselector.R;
 
 import java.lang.ref.WeakReference;
 

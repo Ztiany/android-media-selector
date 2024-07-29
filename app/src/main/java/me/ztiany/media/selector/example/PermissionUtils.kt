@@ -53,6 +53,7 @@ fun AppCompatActivity.askCameraOnly(needLocation: Boolean, onGranted: () -> Unit
 }
 
 fun AppCompatActivity.askMediaPermissionWhenUsingSAF(onGranted: () -> Unit) {
+    // Scoped storage is enabled in Android 10 (API level 29) and higher.
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         Timber.d("Build.VERSION_CODES.Q: askMediaPermissionWhenUsingSAF")
         onGranted()

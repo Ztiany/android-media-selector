@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ztiany.mediaselector">
+    package="com.android.sdk.mediaselector">
 
     <!-- ==================================================================
      Declare it for querying if there is camera app on the device.

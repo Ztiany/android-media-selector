@@ -27,7 +27,7 @@ import com.bilibili.boxing.AbsBoxingActivity;
 import com.bilibili.boxing.AbsBoxingViewFragment;
 import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.ztiany.mediaselector.R;
+import com.android.sdk.mediaselector.R;
 
 import java.util.ArrayList;
 import java.util.List;
