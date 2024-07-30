@@ -9,7 +9,7 @@ import com.android.base.delegate.activity.ActivityDelegateOwner
 import com.android.base.delegate.fragment.FragmentDelegate
 import com.android.base.delegate.fragment.FragmentDelegateOwner
 
-internal fun autoCallback(appCompatActivity: AppCompatActivity, stateHandler: ActivityStateHandler) {
+internal fun autoCallback(appCompatActivity: AppCompatActivity, stateHandler: ComponentStateHandler) {
     if (!hasActivityDelegateOwner()) {
         return
     }
@@ -30,7 +30,7 @@ internal fun autoCallback(appCompatActivity: AppCompatActivity, stateHandler: Ac
     }
 }
 
-internal fun autoCallback(fragment: Fragment, stateHandler: ActivityStateHandler) {
+internal fun autoCallback(fragment: Fragment, stateHandler: ComponentStateHandler) {
     if (!hasFragmentDelegateOwner()) {
         return
     }

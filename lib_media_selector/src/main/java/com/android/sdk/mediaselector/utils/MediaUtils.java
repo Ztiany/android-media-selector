@@ -2,137 +2,19 @@ package com.android.sdk.mediaselector.utils;
 
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
-import androidx.core.content.FileProvider;
-
-import com.android.sdk.mediaselector.MediaSelectorConfiguration;
-import com.android.sdk.mediaselector.processor.crop.CropOptions;
-import com.yalantis.ucrop.UCrop;
-
-import java.io.File;
-import java.util.List;
-
-import timber.log.Timber;
-
 /**
- * @author Ztiany
+ * @see <a href="https://stackoverflow.com/questions/20067508/get-real-path-from-uri-android-kitkat-new-storage-access-framework/20559175">get-real-path-from-uri-android-kitkat-new-storage-access-framework<a/>
  */
-public class MediaUtils {
+class MediaUtils {
 
-    private MediaUtils() {
-        throw new UnsupportedOperationException("MediaUtils");
-    }
-
-    public static final String MIMETYPE_IMAGE = "image/*";
-    public static final String MIMETYPE_VIDEO = "video/*";
-    public static final String MIMETYPE_ALL = "*/*";
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Camera
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * 判断系统中是否存在可以启动的相机应用
-     *
-     * @return 存在返回 true，不存在返回 false。
-     */
-    public static boolean hasCamera(Context context) {
-        PackageManager packageManager = context.getPackageManager();
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        return !list.isEmpty();
-    }
-
-    /**
-     * @param targetFile 源文件，裁剪之后新的图片覆盖此文件
-     */
-    public static Intent makeCaptureIntent(Context context, File targetFile, String authority) {
-        StorageUtils.makeFilePath(targetFile);
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (Build.VERSION.SDK_INT < 24) {
-            Uri fileUri = Uri.fromFile(targetFile);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-        } else {
-            Uri fileUri = FileProvider.getUriForFile(context, authority, targetFile);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        }
-        return intent;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // UCrop
-    ///////////////////////////////////////////////////////////////////////////
-
-    public static void toUCrop(ActFragWrapper actFragWrapper, String srcPath, CropOptions cropConfig, int requestCode) {
-        Uri srcUri = new Uri.Builder()
-                .scheme("file")
-                .appendPath(srcPath)
-                .build();
-        toUCrop(actFragWrapper, srcUri, cropConfig, requestCode);
-    }
-
-    public static void toUCrop(ActFragWrapper actFragWrapper, Uri srcUri, CropOptions cropConfig, int requestCode) {
-        String targetPath = StorageUtils.createInternalPicturePath(actFragWrapper.getContext(), StorageUtils.JPEG);
-        Uri targetUri = new Uri.Builder()
-                .scheme("file")
-                .appendPath(targetPath)
-                .build();
-
-        // 参数
-        UCrop.Options crop = new UCrop.Options();
-        crop.setCompressionFormat(Bitmap.CompressFormat.JPEG);
-        crop.withMaxResultSize(cropConfig.getOutputX(), cropConfig.getAspectY());
-        crop.withAspectRatio(cropConfig.getAspectX(), cropConfig.getAspectY());
-
-        // 颜色
-        int color = MediaSelectorConfiguration.getPrimaryColor(actFragWrapper.getContext());
-        crop.setToolbarColor(color);
-        crop.setStatusBarColor(color);
-
-        // 开始裁减
-        if (actFragWrapper.getFragment() != null) {
-            UCrop.of(srcUri, targetUri)
-                    .withOptions(crop)
-                    .start(actFragWrapper.getContext(), actFragWrapper.getFragment(), requestCode);
-        } else if (actFragWrapper.getActivity() != null) {
-            UCrop.of(srcUri, targetUri)
-                    .withOptions(crop)
-                    .start(actFragWrapper.getActivity(), requestCode);
-        }
-    }
-
-    public static Uri getUCropResult(Intent data) {
-        if (data == null) {
-            return null;
-        }
-        Throwable throwable = UCrop.getError(data);
-        if (throwable != null) {
-            Timber.e(throwable, "getUCropResult");
-            return null;
-        }
-        return UCrop.getOutput(data);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 从各种 Uri 中获取真实的路径
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * @see <a href="https://stackoverflow.com/questions/20067508/get-real-path-from-uri-android-kitkat-new-storage-access-framework/20559175">get-real-path-from-uri-android-kitkat-new-storage-access-framework<a/>
-     */
     public static String getAbsolutePath(final Context context, final Uri uri) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && DocumentsContract.isDocumentUri(context, uri)) {
+        if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
@@ -167,10 +49,12 @@ public class MediaUtils {
                 return getDataColumn(context, contentUri, selection, selectionArgs);
             }
         }
+
         // MediaStore (and general)
         else if ("content".equalsIgnoreCase(uri.getScheme())) {
             return getDataColumn(context, uri, null, null);
         }
+
         // File
         else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getPath();

@@ -1,14 +1,18 @@
 package com.android.sdk.mediaselector
 
-import android.net.Uri
-
 interface ResultListener {
-
-    fun onResult(result: List<Uri>)
 
     /** Check out logs for detailed information. */
     fun onFailed() {}
 
     fun onCanceled() {}
+
+    fun onResult(result: List<Item>) {
+        if (result.size == 1) {
+            onSingleResult(result.first())
+        }
+    }
+
+    fun onSingleResult(result: Item) {}
 
 }

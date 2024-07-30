@@ -4,17 +4,17 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
-import com.android.sdk.mediaselector.ActivityStateHandler
+import com.android.sdk.mediaselector.ActFragWrapper
+import com.android.sdk.mediaselector.ComponentStateHandler
 import com.android.sdk.mediaselector.Item
-import com.android.sdk.mediaselector.SelectorResultListener
-import com.android.sdk.mediaselector.utils.ActFragWrapper
+import com.android.sdk.mediaselector.ResultListener
 import timber.log.Timber
 
 internal class ProcessorManager(
     private val actFragWrapper: ActFragWrapper,
     private val lifecycleOwner: LifecycleOwner,
-    private val resultListener: SelectorResultListener,
-) : ActivityStateHandler {
+    private val resultListener: ResultListener,
+) : ComponentStateHandler {
 
     private val processors = mutableListOf<Processor>()
 
@@ -40,9 +40,7 @@ internal class ProcessorManager(
         }
         processors.clear()
         processors.addAll(assembledProcessors)
-        processors.forEach {
-            it.processorChain = processorChain
-        }
+        processors.forEach { it.onAttachToChain(processorChain) }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -76,9 +74,9 @@ internal class ProcessorManager(
     private fun onAllProcessorCompleted(result: List<Uri>) {
         resultListener.onResult(result.map {
             Item(
-                rawUri = Uri.EMPTY,
-                middleUri = emptyMap(),
-                uri = it
+                id = "",
+                uri = it,
+                middle = emptyMap(),
             )
         })
     }
