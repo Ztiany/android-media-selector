@@ -10,7 +10,10 @@ import android.provider.OpenableColumns
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toFile
 import com.android.sdk.mediaselector.Item
+import com.luck.picture.lib.config.PictureMimeType
+import com.luck.picture.lib.utils.PictureFileUtils
 import timber.log.Timber
+import java.io.File
 
 internal data class FileAttribute(
     val name: String,
@@ -72,7 +75,11 @@ private fun Uri.getUriAttribute(context: Context): FileAttribute? {
  * - [how-to-get-the-full-file-path-from-uri](https://stackoverflow.com/questions/13209494/how-to-get-the-full-file-path-from-uri)
  */
 internal fun Uri.getAbsolutePath(context: Context): String? {
-    return MediaUtils.getAbsolutePath(context, this@getAbsolutePath)
+    return if (isFile()) {
+        toFile().absolutePath
+    } else {
+        PictureFileUtils.getPath(context, Uri.parse(path))
+    }
 }
 
 internal fun Uri.getFilePostfix(context: Context): String? {

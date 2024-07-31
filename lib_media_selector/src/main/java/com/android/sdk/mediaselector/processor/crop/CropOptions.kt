@@ -12,8 +12,8 @@ data class CropOptions(
     val aspectX: Int = 0,
     /** 高度比例与 aspectX 组合，如 16:9 */
     val aspectY: Int = 0,
-    /**输出图片的宽度*/
+    /** 输出图片的宽度 */
     val outputX: Int = 0,
-    /**输入图片的高度*/
+    /** 输入图片的高度 */
     val outputY: Int = 0,
 ) : Parcelable

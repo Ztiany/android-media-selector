@@ -90,13 +90,6 @@ internal class CropProcessor(
     }
 
     private fun toUCrop(srcUri: Uri) {
-        /*
-        if src is a path(String).
-         val srcUri = Uri.Builder()
-            .scheme("file")
-            .appendPath(srcPath)
-            .build()
-         */
         val targetPath: String = host.context.createInternalVideoPath()
         val targetUri = Uri.Builder()
             .scheme("file")
@@ -116,11 +109,11 @@ internal class CropProcessor(
 
         // 开始裁减
         if (host.fragment != null) {
-            UCrop.of(srcUri, targetUri)
+            UCrop.of<Uri>(srcUri, targetUri)
                 .withOptions(crop)
                 .start(host.context, host.fragment, REQUEST_CROP)
         } else if (host.activity != null) {
-            UCrop.of(srcUri, targetUri)
+            UCrop.of<Uri>(srcUri, targetUri)
                 .withOptions(crop)
                 .start(host.activity, REQUEST_CROP)
         }
