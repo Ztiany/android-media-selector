@@ -1,6 +1,6 @@
 package com.android.sdk.mediaselector.processor
 
-import android.net.Uri
+import com.android.sdk.mediaselector.Item
 
 interface ProcessorChain {
 
@@ -8,6 +8,6 @@ interface ProcessorChain {
 
     fun onCanceled()
 
-    fun onResult(uri: List<Uri>)
+    fun onResult(items: List<Item>)
 
 }

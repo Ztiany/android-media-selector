@@ -7,19 +7,21 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Item(
     val id: String,
-    val uri: Uri,
-    internal val middle: Map<String, Media>,
-) : Parcelable
-
-@Parcelize
-data class Media(
-    val uri: Uri,
-    val size: Long = 0,
+    val mineType: String,
+    /** Available only when this item represent a video file. */
     val duration: Long = 0,
+
+    val rawUri: Uri,
+    val rawWidth: Int = 0,
+    val rawHeight: Int = 0,
+    val rawSize: Long = 0,
+    /** As of Android 10, the path is no longer accessible. */
+    val rawPath: String = "",
+
+    val uri: Uri,
     val width: Int = 0,
     val height: Int = 0,
+    val size: Long = 0,
+    val path: String = "",
 ) : Parcelable
 
-fun Item.getMedia(processName: String): Media {
-    return middle[processName] ?: throw IllegalArgumentException("processName not found")
-}

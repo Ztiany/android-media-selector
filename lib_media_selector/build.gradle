@@ -28,17 +28,8 @@ android {
 
     sourceSets {
         main {
-            java.srcDirs += "src/photoviewer/java"
-            res.srcDirs += "src/photoviewer/res"
-
-            java.srcDirs += "src/boxing/java"
-            res.srcDirs += "src/boxing/res"
-
-            java.srcDirs += "src/boxing-impl/java"
-            res.srcDirs += "src/boxing-impl/res"
-
-            java.srcDirs += "src/imageloader/java"
-            res.srcDirs += "src/imageloader/res"
+            java.srcDirs += "src/selector/java"
+            res.srcDirs += "src/selector/res"
         }
     }
 
@@ -54,11 +45,16 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
 
-    compileOnly 'io.github.ztiany:android-arch-delegate:1.0.5'
-    compileOnly "com.github.bumptech.glide:glide:4.16.0"
-
+    implementation "com.github.bumptech.glide:glide:4.16.0"
+    implementation 'com.guolindev.permissionx:permissionx:1.8.0'
     implementation "com.jakewharton.timber:timber:4.7.1"
     implementation("com.github.yalantis:ucrop:2.2.8") {
         exclude group: "com.squareup.okhttp3"
     }
+
+    implementation 'io.github.lucksiege:pictureselector:v3.11.2'
+    implementation 'io.github.lucksiege:compress:v3.11.2'
+    //implementation 'io.github.lucksiege:ucrop:v3.11.2'
+
+    compileOnly 'io.github.ztiany:android-arch-delegate:1.0.5'
 }

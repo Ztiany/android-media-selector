@@ -8,9 +8,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
-/**
- * @see <a href="https://stackoverflow.com/questions/20067508/get-real-path-from-uri-android-kitkat-new-storage-access-framework/20559175">get-real-path-from-uri-android-kitkat-new-storage-access-framework<a/>
- */
 class MediaUtils {
 
     public static String getAbsolutePath(final Context context, final Uri uri) {

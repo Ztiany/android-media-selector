@@ -2,11 +2,14 @@ package com.android.sdk.mediaselector.processor.picker
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
-import com.android.sdk.mediaselector.processor.BaseProcessor
 import com.android.sdk.mediaselector.ActFragWrapper
+import com.android.sdk.mediaselector.Item
+import com.android.sdk.mediaselector.getPermissionRequester
+import com.android.sdk.mediaselector.processor.BaseProcessor
+import com.android.sdk.mediaselector.utils.MineType
 import com.android.sdk.mediaselector.utils.getClipDataUris
 import com.android.sdk.mediaselector.utils.getSingleDataUri
+import com.android.sdk.mediaselector.utils.tryFillMediaInfo
 import timber.log.Timber
 
 /**
@@ -27,8 +30,12 @@ internal class SAFPicker(
     private val multiple: Boolean,
 ) : BaseProcessor() {
 
-    override fun start(params: List<Uri>) {
-        openSAF()
+    override fun start(params: List<Item>) {
+        getPermissionRequester().askForReadStoragePermissionWhenUsingBuiltinPicker(
+            host.fragmentActivity,
+            onGranted = { openSAF() },
+            onDenied = { processorChain.onCanceled() }
+        )
     }
 
     private fun openSAF() {
@@ -39,7 +46,7 @@ internal class SAFPicker(
                 type = types.first()
             } else {
                 type = "*/*"
-                putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
+                putExtra(Intent.EXTRA_MIME_TYPES, types.toTypedArray())
             }
         }
 
@@ -67,7 +74,10 @@ internal class SAFPicker(
         if (result.isEmpty()) {
             processorChain.onFailed()
         } else {
-            processorChain.onResult(result.toList())
+            val type = if (types.size == 1) types.first() else MineType.ALL.value
+            processorChain.onResult(result.toList().map {
+                Item(id = it.toString(), rawUri = it, uri = it, mineType = type).tryFillMediaInfo(host.context)
+            })
         }
     }
 

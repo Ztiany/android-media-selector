@@ -4,12 +4,16 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Bundle
+import androidx.core.os.BundleCompat
 import com.android.sdk.mediaselector.ActFragWrapper
+import com.android.sdk.mediaselector.Item
 import com.android.sdk.mediaselector.getConfiguredPrimaryColor
 import com.android.sdk.mediaselector.processor.BaseProcessor
 import com.android.sdk.mediaselector.utils.createInternalVideoPath
 import com.android.sdk.mediaselector.utils.getAbsolutePath
 import com.android.sdk.mediaselector.utils.isCropSupported
+import com.android.sdk.mediaselector.utils.tryFillMediaInfo
 import com.yalantis.ucrop.UCrop
 import timber.log.Timber
 import java.io.File
@@ -19,14 +23,15 @@ internal class CropProcessor(
     private val cropOptions: CropOptions,
 ) : BaseProcessor() {
 
-    private var originContent: List<Uri> = emptyList()
+    private var originContent: List<Item> = emptyList()
 
-    private var processedContent = mutableListOf<Uri>()
+    private var processedContent = mutableListOf<Item>()
 
     private var progress = 0
 
-    override fun start(params: List<Uri>) {
+    override fun start(params: List<Item>) {
         originContent = params
+        processedContent = mutableListOf()
         progress = 0
         continueCropWork()
     }
@@ -58,22 +63,27 @@ internal class CropProcessor(
             return
         }
 
-        processedContent.add(Uri.fromFile(File(absolutePath)))
+        val origin = originContent[progress - 1]
+        val uri = Uri.fromFile(File(absolutePath))
+        processedContent.add(origin.copy(uri = uri).tryFillMediaInfo(host.context))
         continueCropWork()
     }
 
     private fun continueCropWork() {
+        Timber.d("progress: $progress, size: ${originContent.size}")
         if (progress >= originContent.size) {
             processorChain.onResult(processedContent)
             return
         }
 
-        val uriToCrop = originContent[progress]
-        if (uriToCrop.isCropSupported(host.context)) {
-            toUCrop(uriToCrop)
+        val item = originContent[progress]
+        if (item.uri.isCropSupported(host.context)) {
+            Timber.d("to crop: ${item.uri}")
             progress++
+            toUCrop(item.uri)
         } else {
-            processedContent.add(uriToCrop)
+            Timber.d("skip crop: ${item.uri}")
+            processedContent.add(item)
             progress++
             continueCropWork()
         }
@@ -81,7 +91,7 @@ internal class CropProcessor(
 
     private fun toUCrop(srcUri: Uri) {
         /*
-        if src is a String.
+        if src is a path(String).
          val srcUri = Uri.Builder()
             .scheme("file")
             .appendPath(srcPath)
@@ -125,8 +135,28 @@ internal class CropProcessor(
         return UCrop.getOutput(data)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelableArrayList(ORIGIN_ITEM_KEY, ArrayList(originContent))
+        outState.putParcelableArrayList(PROCESSED_ITEM_KEY, ArrayList(processedContent))
+        outState.putInt(PROGRESS_KEY, progress)
+        Timber.d("onSaveInstanceState: progress=$progress")
+    }
+
+    override fun onRestoreInstanceState(outState: Bundle?) {
+        outState?.let {
+            originContent = BundleCompat.getParcelableArrayList(outState, ORIGIN_ITEM_KEY, Item::class.java) ?: emptyList()
+            processedContent = BundleCompat.getParcelableArrayList(outState, PROCESSED_ITEM_KEY, Item::class.java) ?: mutableListOf()
+            progress = outState.getInt(PROGRESS_KEY)
+            Timber.d("onRestoreInstanceState: progress=$progress")
+        }
+    }
+
     companion object {
         private const val REQUEST_CROP = 10902
+
+        private const val ORIGIN_ITEM_KEY = "crop_origin_item_key"
+        private const val PROCESSED_ITEM_KEY = "crop_processed_item_key"
+        private const val PROGRESS_KEY = "crop_progress_key"
     }
 
 }

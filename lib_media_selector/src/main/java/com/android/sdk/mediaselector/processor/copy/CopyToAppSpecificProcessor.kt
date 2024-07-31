@@ -2,26 +2,24 @@ package com.android.sdk.mediaselector.processor.copy
 
 import android.content.Context
 import android.net.Uri
-import android.os.Build
-import androidx.annotation.RequiresApi
+import com.android.sdk.mediaselector.Item
 import com.android.sdk.mediaselector.processor.BaseProcessor
 import com.android.sdk.mediaselector.utils.createInternalPath
 import com.android.sdk.mediaselector.utils.getFilePostfix
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.io.FileOutputStream
 
-class CopyToAppSpecificProcessor : BaseProcessor() {
+class CopyToAppSpecificProcessor(private val context: Context) : BaseProcessor() {
 
-    override fun start(params: List<Uri>) {
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+    override fun start(params: List<Item>) {
 
     }
 
-    /**
-     *@author Ztiany
-     */
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun copySingleToInternal(context: Context, uri: Uri): String? {
+    private suspend fun copySingleToInternal(context: Context, uri: Uri): String? {
         // TODO  get file extension via reading binary magic number.
         var postfix = uri.getFilePostfix(context)
         if (postfix.isNullOrBlank()) {
@@ -30,9 +28,11 @@ class CopyToAppSpecificProcessor : BaseProcessor() {
 
         return try {
             val target = context.createInternalPath(postfix)
+            val out = FileOutputStream(target)
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                Files.copy(inputStream, Paths.get(target))
+                inputStream.copyTo(out)
             }
+            runCatching { out.close() }
             target
         } catch (e: Exception) {
             Timber.d("copySingleToInternal() $e")

@@ -1,18 +1,26 @@
 package com.android.sdk.mediaselector
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
 
 class ActFragWrapper private constructor(
     val fragment: Fragment?,
-    val activity: Activity?,
+    val activity: FragmentActivity?,
 ) {
 
     val context: Context
         get() = activity ?: (fragment?.requireContext() ?: throw IllegalStateException("never happen."))
+
+    val fragmentActivity: FragmentActivity
+        get() = activity ?: fragment?.requireActivity() ?: throw IllegalStateException("never happen.")
+
+    val scope: CoroutineScope
+        get() = activity?.lifecycleScope ?: fragment?.lifecycleScope ?: throw IllegalStateException("never happen.")
 
     fun startActivityForResult(intent: Intent, requestCode: Int, options: Bundle? = null) {
         if (activity != null) {
@@ -22,7 +30,7 @@ class ActFragWrapper private constructor(
 
     companion object {
 
-        fun create(activity: Activity): ActFragWrapper {
+        fun create(activity: FragmentActivity): ActFragWrapper {
             return ActFragWrapper(activity = activity, fragment = null)
         }
 

@@ -9,9 +9,13 @@ import android.os.Build
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import com.android.sdk.mediaselector.ActFragWrapper
+import com.android.sdk.mediaselector.Item
 import com.android.sdk.mediaselector.getConfiguredAuthority
+import com.android.sdk.mediaselector.getPermissionRequester
 import com.android.sdk.mediaselector.processor.BaseProcessor
+import com.android.sdk.mediaselector.utils.MineType
 import com.android.sdk.mediaselector.utils.makeFilePath
+import com.android.sdk.mediaselector.utils.tryFillMediaInfo
 import timber.log.Timber
 import java.io.File
 
@@ -25,13 +29,21 @@ internal class CaptureProcessor(
     private val savePath: String,
 ) : BaseProcessor() {
 
-    override fun start(params: List<Uri>) {
+    override fun start(params: List<Item>) {
         Timber.d("start is called with: $params")
         if (!hasCamera(host.context)) {
             Timber.w("The device has no camera apps.")
             processorChain.onFailed()
         }
 
+        getPermissionRequester().askForCameraPermission(
+            host.fragmentActivity,
+            onGranted = { startCapturer() },
+            onDenied = { processorChain.onCanceled() }
+        )
+    }
+
+    private fun startCapturer() {
         val intent = makeCaptureIntent(host.context, File(savePath), getConfiguredAuthority(host.context))
         try {
             host.startActivityForResult(intent, REQUEST_CAPTURE_PHOTO, null)
@@ -42,6 +54,7 @@ internal class CaptureProcessor(
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Timber.d("onActivityResult: requestCode=$requestCode, resultCode=$resultCode, data=$data")
         if (requestCode != REQUEST_CAPTURE_PHOTO) {
             return
         }
@@ -53,9 +66,14 @@ internal class CaptureProcessor(
         // 检测文件是否被保存下来
         val savedFile = File(savePath)
         if (!savedFile.exists()) {
+            Timber.d("onActivityResult file not exists: $savedFile")
             processorChain.onFailed()
         } else {
-            processorChain.onResult(listOf(Uri.fromFile(savedFile)))
+            Timber.d("onActivityResult file exists: $savedFile")
+            val uri = Uri.fromFile(savedFile)
+            val mineType = if (type == IMAGE) MineType.IMAGE.value else MineType.VIDEO.value
+            val element = Item(id = savedFile.absolutePath, rawUri = uri, uri = uri, mineType = mineType).tryFillMediaInfo(host.context)
+            processorChain.onResult(listOf(element))
         }
     }
 

@@ -1,5 +1,6 @@
 package com.android.sdk.mediaselector
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -9,12 +10,12 @@ import com.android.base.delegate.activity.ActivityDelegateOwner
 import com.android.base.delegate.fragment.FragmentDelegate
 import com.android.base.delegate.fragment.FragmentDelegateOwner
 
-internal fun autoCallback(appCompatActivity: AppCompatActivity, stateHandler: ComponentStateHandler) {
+internal fun autoCallback(activity: Activity, stateHandler: ComponentStateHandler) {
     if (!hasActivityDelegateOwner()) {
         return
     }
-    if (appCompatActivity is ActivityDelegateOwner) {
-        (appCompatActivity as ActivityDelegateOwner).addDelegate(object : ActivityDelegate<AppCompatActivity> {
+    if (activity is ActivityDelegateOwner) {
+        (activity as ActivityDelegateOwner).addDelegate(object : ActivityDelegate<AppCompatActivity> {
             override fun onSaveInstanceState(savedInstanceState: Bundle) {
                 stateHandler.onSaveInstanceState(savedInstanceState)
             }

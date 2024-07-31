@@ -1,19 +1,16 @@
 package com.android.sdk.mediaselector.processor
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
-import com.android.sdk.mediaselector.ActFragWrapper
 import com.android.sdk.mediaselector.ComponentStateHandler
 import com.android.sdk.mediaselector.Item
 import com.android.sdk.mediaselector.ResultListener
 import timber.log.Timber
 
 internal class ProcessorManager(
-    private val actFragWrapper: ActFragWrapper,
     private val lifecycleOwner: LifecycleOwner,
-    private val resultListener: ResultListener,
+    private val resultListener: ResultListener
 ) : ComponentStateHandler {
 
     private val processors = mutableListOf<Processor>()
@@ -29,8 +26,8 @@ internal class ProcessorManager(
             resultListener.onCanceled()
         }
 
-        override fun onResult(uri: List<Uri>) {
-            continueProcedure(uri)
+        override fun onResult(items: List<Item>) {
+            continueProcedure(items)
         }
     }
 
@@ -38,47 +35,54 @@ internal class ProcessorManager(
         if (assembledProcessors.isEmpty()) {
             throw IllegalStateException("assembledProcessors is empty.")
         }
+        Timber.d("install: assembledProcessors.size = ${assembledProcessors.size}")
         processors.clear()
         processors.addAll(assembledProcessors)
         processors.forEach { it.onAttachToChain(processorChain) }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Timber.d("onActivityResult: processors.size = ${processors.size}, requestCode=$requestCode, resultCode=$resultCode, data=$data")
         processors.forEach { it.onActivityResult(requestCode, resultCode, data) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        Timber.d("onSaveInstanceState: processorProgress = $processorProgress")
+        outState.putInt(PROGRESS_KEY, processorProgress)
         processors.forEach { it.onSaveInstanceState(outState) }
     }
 
     override fun onRestoreInstanceState(outState: Bundle?) {
+        outState?.let {
+            processorProgress = it.getInt(PROGRESS_KEY)
+        }
+        Timber.d("onRestoreInstanceState: processorProgress = $processorProgress")
         processors.forEach { it.onRestoreInstanceState(outState) }
     }
 
     fun start() {
         processorProgress = 0
+        Timber.d("start: processorProgress = 0")
         continueProcedure(emptyList())
     }
 
-    private fun continueProcedure(params: List<Uri>) {
+    private fun continueProcedure(params: List<Item>) {
         val processor = processors.getOrNull(processorProgress)
-        Timber.d("continueProcedure: $processor")
+        Timber.d("processorProgress = $processorProgress, continueProcedure: $processor")
         if (processor == null) {
             onAllProcessorCompleted(params)
             return
         }
-        processor.start(params)
         processorProgress++
+        processor.start(params)
     }
 
-    private fun onAllProcessorCompleted(result: List<Uri>) {
-        resultListener.onResult(result.map {
-            Item(
-                id = "",
-                uri = it,
-                middle = emptyMap(),
-            )
-        })
+    private fun onAllProcessorCompleted(result: List<Item>) {
+        resultListener.onResult(result)
+    }
+
+    companion object {
+        private const val PROGRESS_KEY = "processor_progress_key"
     }
 
 }

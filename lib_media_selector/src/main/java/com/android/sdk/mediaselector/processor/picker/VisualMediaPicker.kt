@@ -2,13 +2,16 @@ package com.android.sdk.mediaselector.processor.picker
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import com.android.sdk.mediaselector.processor.BaseProcessor
 import com.android.sdk.mediaselector.ActFragWrapper
+import com.android.sdk.mediaselector.Item
+import com.android.sdk.mediaselector.getPermissionRequester
+import com.android.sdk.mediaselector.processor.BaseProcessor
+import com.android.sdk.mediaselector.utils.MineType
 import com.android.sdk.mediaselector.utils.getClipDataUris
 import com.android.sdk.mediaselector.utils.getSingleDataUri
+import com.android.sdk.mediaselector.utils.tryFillMediaInfo
 import timber.log.Timber
 
 /**
@@ -23,7 +26,15 @@ internal class VisualMediaPicker(
     private val count: Int,
 ) : BaseProcessor() {
 
-    override fun start(params: List<Uri>) {
+    override fun start(params: List<Item>) {
+        getPermissionRequester().askForReadStoragePermissionWhenUsingBuiltinPicker(
+            host.fragmentActivity,
+            onGranted = { openPhotoPicker() },
+            onDenied = { processorChain.onCanceled() }
+        )
+    }
+
+    private fun openPhotoPicker() {
         val intent = if (count == 1) {
             ActivityResultContracts.PickVisualMedia().createIntent(
                 host.context,
@@ -59,7 +70,14 @@ internal class VisualMediaPicker(
         if (result.isEmpty()) {
             processorChain.onFailed()
         } else {
-            processorChain.onResult(result.toList())
+            val type = when (this.type) {
+                ActivityResultContracts.PickVisualMedia.ImageOnly -> MineType.IMAGE.value
+                ActivityResultContracts.PickVisualMedia.VideoOnly -> MineType.VIDEO.value
+                else -> MineType.ALL.value
+            }
+            processorChain.onResult(result.toList().map {
+                Item(id = it.toString(), rawUri = it, uri = it, mineType = type).tryFillMediaInfo(host.context)
+            })
         }
     }
 
