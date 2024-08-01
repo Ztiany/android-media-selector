@@ -8,22 +8,16 @@ import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
-fun File?.makeFilePath(): Boolean {
+///////////////////////////////////////////////////////////////////////////
+// internal
+///////////////////////////////////////////////////////////////////////////
+
+internal fun File?.makeFilePath(): Boolean {
     if (this == null) {
         return false
     }
     val parent = parentFile ?: return false
     return parent.exists() || parent.mkdirs()
-}
-
-private const val MEDIA_SELECTOR_FOLDER = "media-selector"
-
-internal fun Context.createInternalImagePath(): String {
-    return createInternalPath(".jpeg")
-}
-
-internal fun Context.createInternalVideoPath(): String {
-    return createInternalPath(".mp4")
 }
 
 internal fun Context.createInternalPath(postfix: String): String {
@@ -38,6 +32,12 @@ internal fun Context.createInternalPath(postfix: String): String {
     file.makeFilePath()
     return file.absolutePath
 }
+
+///////////////////////////////////////////////////////////////////////////
+// private
+///////////////////////////////////////////////////////////////////////////
+
+private const val MEDIA_SELECTOR_FOLDER = "media-selector"
 
 private val safeSDF = object : ThreadLocal<SimpleDateFormat>() {
     override fun initialValue(): SimpleDateFormat {

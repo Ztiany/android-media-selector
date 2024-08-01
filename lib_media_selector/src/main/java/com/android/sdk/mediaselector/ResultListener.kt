@@ -7,12 +7,12 @@ interface ResultListener {
 
     fun onCanceled() {}
 
-    fun onResult(result: List<Item>) {
+    fun onResult(result: List<MediaItem>) {
         if (result.size == 1) {
             onSingleResult(result.first())
         }
     }
 
-    fun onSingleResult(result: Item) {}
+    fun onSingleResult(result: MediaItem) {}
 
 }

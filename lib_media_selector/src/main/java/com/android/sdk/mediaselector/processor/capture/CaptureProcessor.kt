@@ -9,13 +9,13 @@ import android.os.Build
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import com.android.sdk.mediaselector.ActFragWrapper
-import com.android.sdk.mediaselector.Item
+import com.android.sdk.mediaselector.MediaItem
+import com.android.sdk.mediaselector.Source
 import com.android.sdk.mediaselector.getConfiguredAuthority
 import com.android.sdk.mediaselector.getPermissionRequester
 import com.android.sdk.mediaselector.processor.BaseProcessor
 import com.android.sdk.mediaselector.utils.MineType
 import com.android.sdk.mediaselector.utils.makeFilePath
-import com.android.sdk.mediaselector.utils.tryFillMediaInfo
 import timber.log.Timber
 import java.io.File
 
@@ -29,7 +29,7 @@ internal class CaptureProcessor(
     private val savePath: String,
 ) : BaseProcessor() {
 
-    override fun start(params: List<Item>) {
+    override fun start(params: List<MediaItem>) {
         Timber.d("start is called with: $params")
         if (!hasCamera(host.context)) {
             Timber.w("The device has no camera apps.")
@@ -72,7 +72,21 @@ internal class CaptureProcessor(
             Timber.d("onActivityResult file exists: $savedFile")
             val uri = Uri.fromFile(savedFile)
             val mineType = if (type == IMAGE) MineType.IMAGE.value else MineType.VIDEO.value
-            val element = Item(id = savedFile.absolutePath, rawUri = uri, uri = uri, mineType = mineType).tryFillMediaInfo(host.context)
+            val rawSize = savedFile.length()
+            val element = MediaItem(
+                id = savedFile.absolutePath,
+                source = Source.Camera,
+                mineType = mineType,
+
+                rawUri = uri,
+                rawPath = savedFile.absolutePath,
+                rawSize = rawSize,
+
+                uri = uri,
+                path = savedFile.absolutePath,
+                size = rawSize,
+            )
+
             processorChain.onResult(listOf(element))
         }
     }

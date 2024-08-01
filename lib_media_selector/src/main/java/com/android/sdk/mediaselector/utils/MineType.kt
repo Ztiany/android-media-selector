@@ -1,7 +1,13 @@
 package com.android.sdk.mediaselector.utils
 
-enum class MineType(val value: String, val formats: List<String>) {
-    IMAGE("image/*", listOf("jpg", "jpeg", "png", "gif", "bmp")),
-    VIDEO("video/*", listOf("mp4", "3gp", "mkv", "avi", "flv")),
-    ALL("*/*", emptyList());
+internal enum class MineType(val value: String) {
+    IMAGE("image/*"),
+    JPEG("image/jpeg"),
+    JPG("image/jpg"),
+    PNG("image/png"),
+    WEBP("image/webp"),
+    GIF("image/gif"),
+    VIDEO("video/*"),
+    MP4("video/mp4"),
+    ALL("*/*");
 }

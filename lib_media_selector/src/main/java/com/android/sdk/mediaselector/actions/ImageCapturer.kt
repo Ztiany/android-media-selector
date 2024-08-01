@@ -3,14 +3,14 @@ package com.android.sdk.mediaselector.actions
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.core.os.ParcelCompat
+import com.android.sdk.mediaselector.ActFragWrapper
 import com.android.sdk.mediaselector.Action
 import com.android.sdk.mediaselector.MediaSelectorImpl
 import com.android.sdk.mediaselector.processor.Processor
 import com.android.sdk.mediaselector.processor.capture.CaptureProcessor
 import com.android.sdk.mediaselector.processor.crop.CropOptions
 import com.android.sdk.mediaselector.processor.crop.CropProcessor
-import com.android.sdk.mediaselector.ActFragWrapper
-import com.android.sdk.mediaselector.utils.createInternalImagePath
+import com.android.sdk.mediaselector.utils.createInternalPath
 
 class ImageCapturer() : Action {
 
@@ -26,6 +26,9 @@ class ImageCapturer() : Action {
     }
 
     fun saveTo(savePath: String): ImageCapturer {
+        if (savePath.isEmpty()) {
+            throw IllegalArgumentException("savePath cannot be empty")
+        }
         this.savePath = savePath
         return this
     }
@@ -36,7 +39,7 @@ class ImageCapturer() : Action {
 
     override fun assembleProcessors(host: ActFragWrapper): List<Processor> {
         if (savePath.isEmpty()) {
-            savePath = host.context.createInternalImagePath()
+            savePath = host.context.createInternalPath(".jpeg")
         }
 
         return buildList {

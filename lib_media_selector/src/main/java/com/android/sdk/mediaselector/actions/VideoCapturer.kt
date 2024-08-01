@@ -2,12 +2,12 @@ package com.android.sdk.mediaselector.actions
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.android.sdk.mediaselector.ActFragWrapper
 import com.android.sdk.mediaselector.Action
 import com.android.sdk.mediaselector.MediaSelectorImpl
 import com.android.sdk.mediaselector.processor.Processor
 import com.android.sdk.mediaselector.processor.capture.CaptureProcessor
-import com.android.sdk.mediaselector.ActFragWrapper
-import com.android.sdk.mediaselector.utils.createInternalVideoPath
+import com.android.sdk.mediaselector.utils.createInternalPath
 
 class VideoCapturer() : Action {
 
@@ -16,6 +16,9 @@ class VideoCapturer() : Action {
     private var savePath: String = ""
 
     fun saveTo(savePath: String): VideoCapturer {
+        if (savePath.isEmpty()) {
+            throw IllegalArgumentException("savePath cannot be empty")
+        }
         this.savePath = savePath
         return this
     }
@@ -26,7 +29,7 @@ class VideoCapturer() : Action {
 
     override fun assembleProcessors(host: ActFragWrapper): List<Processor> {
         if (savePath.isEmpty()) {
-            savePath = host.context.createInternalVideoPath()
+            savePath = host.context.createInternalPath(".mp4")
         }
         return buildList {
             add(CaptureProcessor(host, CaptureProcessor.VIDEO, savePath))

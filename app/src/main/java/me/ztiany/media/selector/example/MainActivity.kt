@@ -2,11 +2,12 @@ package me.ztiany.media.selector.example
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import com.android.base.delegate.simpl.DelegateActivity
+import com.android.sdk.mediaselector.MediaItem
+import com.android.sdk.mediaselector.SelectorConfigurer
 import com.android.sdk.mediaselector.newMediaSelector
 import timber.log.Timber
 import timber.log.Timber.DebugTree
@@ -17,15 +18,33 @@ class MainActivity : DelegateActivity() {
         result.forEach {
             Timber.e("item :$it")
         }
-        showResult(result.map { it.uri })
+
+        if (takingByMediaStore) {
+            selectedItems = result
+            takingByMediaStore = false
+        }
+
+        if (takingFile) {
+            takingFile = false
+            showFiles(result)
+        } else {
+            showMedias(result)
+        }
     }
 
     private var takingFile = false
+    private var takingByMediaStore = false
 
     private lateinit var fileTextView: TextView
 
+    private var selectedItems = emptyList<MediaItem>()
+
     override fun initialize(savedInstanceState: Bundle?) {
         Timber.plant(DebugTree())
+
+        SelectorConfigurer.setUp {
+            setCropPrimaryColorAttr(androidx.appcompat.R.attr.colorAccent)
+        }
     }
 
     override fun provideLayout() = R.layout.activity_main
@@ -34,23 +53,14 @@ class MainActivity : DelegateActivity() {
         fileTextView = findViewById(R.id.selected_files)
     }
 
-    private fun showResult(results: List<Uri>) {
-        if (takingFile) {
-            takingFile = false
-            showFiles(results)
-            return
-        }
-        showMedias(results)
-    }
-
-    private fun showMedias(results: List<Uri>) {
+    private fun showMedias(results: List<MediaItem>) {
         val intent = Intent(this, ResultActivity::class.java)
         intent.putParcelableArrayListExtra(KEY, ArrayList(results))
         startActivity(intent)
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showFiles(results: List<Uri>) {
+    private fun showFiles(results: List<MediaItem>) {
         val files = results.joinToString(separator = "\n\n   ") {
             it.toString()
         }
@@ -138,7 +148,8 @@ class MainActivity : DelegateActivity() {
     }
 
     fun selectMultiPhotoByMediaStore(view: View) {
-        mediaSelector.selectImage().count(9).includeGif().start()
+        takingByMediaStore = true
+        mediaSelector.selectImage().count(9).includeGif().selectedData(selectedItems.map { it.id }).start()
     }
 
     fun selectOneVideoByMediaStore(view: View) {

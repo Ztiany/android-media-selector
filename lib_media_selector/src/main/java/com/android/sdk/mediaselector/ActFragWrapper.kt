@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CoroutineScope
 
@@ -21,6 +22,9 @@ class ActFragWrapper private constructor(
 
     val scope: CoroutineScope
         get() = activity?.lifecycleScope ?: fragment?.lifecycleScope ?: throw IllegalStateException("never happen.")
+
+    val lifecycleOwner: LifecycleOwner
+        get() = activity ?: fragment ?: throw IllegalStateException("never happen.")
 
     fun startActivityForResult(intent: Intent, requestCode: Int, options: Bundle? = null) {
         if (activity != null) {

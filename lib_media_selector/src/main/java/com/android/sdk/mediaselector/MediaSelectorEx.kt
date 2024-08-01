@@ -1,7 +1,5 @@
 package com.android.sdk.mediaselector
 
-import androidx.activity.ComponentActivity
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.android.base.delegate.activity.ActivityDelegateOwner
@@ -37,12 +35,12 @@ fun FragmentActivity.newMediaSelector(resultListener: ResultListener): MediaSele
 fun Fragment.newMediaSelector(
     cancellationHandler: () -> Unit = {},
     failureHandler: () -> Unit = {},
-    resultHandler: (List<Item>) -> Unit,
+    resultHandler: (List<MediaItem>) -> Unit,
 ): MediaSelector {
 
     return MediaSelectorImpl(this, object : ResultListener {
 
-        override fun onResult(result: List<Item>) {
+        override fun onResult(result: List<MediaItem>) {
             resultHandler(result)
         }
 
@@ -67,12 +65,12 @@ fun Fragment.newMediaSelector(
 fun FragmentActivity.newMediaSelector(
     cancellationHandler: () -> Unit = {},
     failureHandler: () -> Unit = {},
-    resultHandler: (List<Item>) -> Unit,
+    resultHandler: (List<MediaItem>) -> Unit,
 ): MediaSelector {
 
     return MediaSelectorImpl(this, object : ResultListener {
 
-        override fun onResult(result: List<Item>) {
+        override fun onResult(result: List<MediaItem>) {
             resultHandler(result)
         }
 

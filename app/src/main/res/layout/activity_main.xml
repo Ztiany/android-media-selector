@@ -175,7 +175,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:onClick="selectOnePhotoByMediaStore"
-            android:text="select a photo(no media location)"
+            android:text="select a photo"
             android:textSize="10sp" />
 
         <Button

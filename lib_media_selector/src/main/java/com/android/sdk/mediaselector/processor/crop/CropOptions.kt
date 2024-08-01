@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 /**
- * 裁剪配置类
+ * 裁剪配置类。
  */
 @Parcelize
 data class CropOptions(

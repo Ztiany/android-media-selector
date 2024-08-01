@@ -2,15 +2,17 @@ package me.ztiany.media.selector.example
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.exifinterface.media.ExifInterface
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.android.sdk.mediaselector.MediaItem
+import com.android.sdk.mediaselector.utils.setRequireOriginal
 import com.bumptech.glide.Glide
 import timber.log.Timber
 import java.io.File
@@ -24,7 +26,7 @@ class ResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
 
-        val list = intent.getParcelableArrayListExtra(KEY) ?: emptyList<Uri>()
+        val list = intent.getParcelableArrayListExtra(KEY) ?: emptyList<MediaItem>()
 
         Timber.d("list: $list")
 
@@ -37,14 +39,14 @@ class ResultActivity : AppCompatActivity() {
                 imageView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                 imageView.scaleType = ImageView.ScaleType.CENTER_CROP
                 imageView.setOnClickListener {
-                    (it.tag as Uri).let(::showMediaInfoChecked)
+                    (it.tag as MediaItem).let(::showMediaInfoChecked)
                 }
                 return object : RecyclerView.ViewHolder(imageView) {}
             }
 
             override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
                 holder.itemView.tag = list[position]
-                Glide.with(holder.itemView).load(list[position]).into(holder.itemView as ImageView)
+                Glide.with(holder.itemView).load(list[position].uri).into(holder.itemView as ImageView)
             }
 
             override fun getItemCount(): Int {
@@ -53,23 +55,36 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun showMediaInfoChecked(uri: Uri) {
-        if (uri.toString().startsWith("content://")) {
-            val stream = contentResolver.openInputStream(uri)
+    private fun showMediaInfoChecked(item: MediaItem) {
+        askMediaLocationPermission(
+            onGranted = {
+                item.rawUri.setRequireOriginal(this)
+                extractLocation(item)
+            },
+            onDenied = {
+                Timber.e("Permission denied")
+            })
+    }
+
+    private fun extractLocation(item: MediaItem) {
+        if (item.rawUri.toString().startsWith("content://")) {
+            val stream = contentResolver.openInputStream(item.rawUri)
             if (stream == null) {
                 Timber.d("showMediaInfo, protocol is content, but openInputStream failed.")
-            }else{
+                Toast.makeText(this, "showMediaInfo, protocol is content, but openInputStream failed.", Toast.LENGTH_LONG).show()
+            } else {
                 Timber.d("showMediaInfo, protocol is content, but openInputStream succeeded.")
-                showMediaInfo(uri, stream)
+                showMediaInfo(item.rawUri, stream)
             }
         } else {
-            val path = uri.path
+            val path = item.uri.path
             if (path.isNullOrEmpty()) {
                 Timber.d("showMediaInfo, protocol is file, but path is null.")
-            }else{
+                Toast.makeText(this, "showMediaInfo, protocol is file, but path is null.", Toast.LENGTH_LONG).show()
+            } else {
                 val file = File(path)
                 Timber.d("showMediaInfo, protocol is file, file exist = ${file.exists()}")
-                showMediaInfo(uri, file.inputStream())
+                showMediaInfo(item.rawUri, file.inputStream())
             }
         }
     }
@@ -80,8 +95,9 @@ class ResultActivity : AppCompatActivity() {
             ExifInterface(stream).run {
                 val latLong = latLong ?: doubleArrayOf(0.0, 0.0)
                 Timber.e("%s latLong = %s", uri.toString(), latLong.contentToString())
+                Toast.makeText(this@ResultActivity, "latLong = ${latLong.contentToString()}", Toast.LENGTH_LONG).show()
             }
-        }
+        } ?: Toast.makeText(this, "showMediaInfo, stream is null", Toast.LENGTH_LONG).show()
     }
 
 }

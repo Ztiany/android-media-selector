@@ -5,8 +5,9 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Item(
+data class MediaItem(
     val id: String,
+    val source: Source,
     val mineType: String,
     /** Available only when this item represent a video file. */
     val duration: Long = 0,
@@ -25,3 +26,8 @@ data class Item(
     val path: String = "",
 ) : Parcelable
 
+enum class Source {
+    Camera,
+    Selector,
+    MediaStore,
+}

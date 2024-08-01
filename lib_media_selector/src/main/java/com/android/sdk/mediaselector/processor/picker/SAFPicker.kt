@@ -3,13 +3,15 @@ package com.android.sdk.mediaselector.processor.picker
 import android.app.Activity
 import android.content.Intent
 import com.android.sdk.mediaselector.ActFragWrapper
-import com.android.sdk.mediaselector.Item
+import com.android.sdk.mediaselector.MediaItem
+import com.android.sdk.mediaselector.Source
 import com.android.sdk.mediaselector.getPermissionRequester
 import com.android.sdk.mediaselector.processor.BaseProcessor
 import com.android.sdk.mediaselector.utils.MineType
+import com.android.sdk.mediaselector.utils.getAbsolutePath
 import com.android.sdk.mediaselector.utils.getClipDataUris
 import com.android.sdk.mediaselector.utils.getSingleDataUri
-import com.android.sdk.mediaselector.utils.tryFillMediaInfo
+import com.android.sdk.mediaselector.utils.tryFillPickedMediaInfo
 import timber.log.Timber
 
 /**
@@ -30,7 +32,7 @@ internal class SAFPicker(
     private val multiple: Boolean,
 ) : BaseProcessor() {
 
-    override fun start(params: List<Item>) {
+    override fun start(params: List<MediaItem>) {
         getPermissionRequester().askForReadStoragePermissionWhenUsingBuiltinPicker(
             host.fragmentActivity,
             onGranted = { openSAF() },
@@ -45,7 +47,7 @@ internal class SAFPicker(
             if (types.size == 1) {
                 type = types.first()
             } else {
-                type = "*/*"
+                type =  MineType.ALL.value
                 putExtra(Intent.EXTRA_MIME_TYPES, types.toTypedArray())
             }
         }
@@ -76,7 +78,18 @@ internal class SAFPicker(
         } else {
             val type = if (types.size == 1) types.first() else MineType.ALL.value
             processorChain.onResult(result.toList().map {
-                Item(id = it.toString(), rawUri = it, uri = it, mineType = type).tryFillMediaInfo(host.context)
+                val realPath = it.getAbsolutePath(host.context)
+                MediaItem(
+                    id = it.toString(),
+                    source = Source.Selector,
+                    mineType = type,
+
+                    rawUri = it,
+                    rawPath = realPath ?: "",
+
+                    uri = it,
+                    path = realPath ?: "",
+                ).tryFillPickedMediaInfo(host.context)
             })
         }
     }

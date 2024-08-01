@@ -3,12 +3,14 @@ package com.android.sdk.mediaselector.processor.picker
 import android.app.Activity
 import android.content.Intent
 import com.android.sdk.mediaselector.ActFragWrapper
-import com.android.sdk.mediaselector.Item
+import com.android.sdk.mediaselector.MediaItem
+import com.android.sdk.mediaselector.Source
 import com.android.sdk.mediaselector.getPermissionRequester
 import com.android.sdk.mediaselector.processor.BaseProcessor
+import com.android.sdk.mediaselector.utils.getAbsolutePath
 import com.android.sdk.mediaselector.utils.getClipDataUris
 import com.android.sdk.mediaselector.utils.getSingleDataUri
-import com.android.sdk.mediaselector.utils.tryFillMediaInfo
+import com.android.sdk.mediaselector.utils.tryFillPickedMediaInfo
 import timber.log.Timber
 
 /**
@@ -23,7 +25,7 @@ internal class GetContentPicker(
     private val multiple: Boolean,
 ) : BaseProcessor() {
 
-    override fun start(params: List<Item>) {
+    override fun start(params: List<MediaItem>) {
         getPermissionRequester().askForReadStoragePermissionWhenUsingBuiltinPicker(
             host.fragmentActivity,
             onGranted = { openContentSelector() },
@@ -60,8 +62,20 @@ internal class GetContentPicker(
         if (result.isEmpty()) {
             processorChain.onFailed()
         } else {
+
             processorChain.onResult(result.toList().map {
-                Item(id = it.toString(), rawUri = it, uri = it, mineType = type).tryFillMediaInfo(host.context)
+                val realPath = it.getAbsolutePath(host.context)
+                MediaItem(
+                    id = it.toString(),
+                    source = Source.Selector,
+                    mineType = type,
+
+                    rawUri = it,
+                    rawPath = realPath ?: "",
+
+                    uri = it,
+                    path = realPath ?: "",
+                ).tryFillPickedMediaInfo(host.context)
             })
         }
     }

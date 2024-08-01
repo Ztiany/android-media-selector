@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
 import com.android.sdk.mediaselector.ComponentStateHandler
-import com.android.sdk.mediaselector.Item
+import com.android.sdk.mediaselector.MediaItem
 import com.android.sdk.mediaselector.ResultListener
 import timber.log.Timber
 
@@ -26,7 +26,7 @@ internal class ProcessorManager(
             resultListener.onCanceled()
         }
 
-        override fun onResult(items: List<Item>) {
+        override fun onResult(items: List<MediaItem>) {
             continueProcedure(items)
         }
     }
@@ -66,7 +66,7 @@ internal class ProcessorManager(
         continueProcedure(emptyList())
     }
 
-    private fun continueProcedure(params: List<Item>) {
+    private fun continueProcedure(params: List<MediaItem>) {
         val processor = processors.getOrNull(processorProgress)
         Timber.d("processorProgress = $processorProgress, continueProcedure: $processor")
         if (processor == null) {
@@ -77,7 +77,7 @@ internal class ProcessorManager(
         processor.start(params)
     }
 
-    private fun onAllProcessorCompleted(result: List<Item>) {
+    private fun onAllProcessorCompleted(result: List<MediaItem>) {
         resultListener.onResult(result)
     }
 
