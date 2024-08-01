@@ -2,9 +2,6 @@ package com.android.sdk.mediaselector
 
 interface ResultListener {
 
-    /** Check out logs for detailed information. */
-    fun onFailed() {}
-
     fun onCanceled() {}
 
     fun onResult(result: List<MediaItem>) {

@@ -42,7 +42,7 @@ internal class GetContentPicker(
             host.startActivityForResult(intent, REQUEST_PICKER)
         } catch (e: Exception) {
             Timber.e(e, "openContentSelector")
-            processorChain.onFailed()
+            processorChain.onCanceled()
         }
     }
 
@@ -60,7 +60,7 @@ internal class GetContentPicker(
         val result = if (multiple) data.getClipDataUris() else data.getSingleDataUri()
         Timber.d("onActivityResult: result=$result")
         if (result.isEmpty()) {
-            processorChain.onFailed()
+            processorChain.onCanceled()
         } else {
 
             processorChain.onResult(result.toList().map {

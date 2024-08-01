@@ -56,7 +56,7 @@ internal class SAFPicker(
             host.startActivityForResult(intent, REQUEST_SAF)
         } catch (e: Exception) {
             Timber.d(e, "openSAF")
-            processorChain.onFailed()
+            processorChain.onCanceled()
         }
     }
 
@@ -74,7 +74,7 @@ internal class SAFPicker(
         val result = if (multiple) data.getClipDataUris() else data.getSingleDataUri()
         Timber.d("onActivityResult: result=$result")
         if (result.isEmpty()) {
-            processorChain.onFailed()
+            processorChain.onCanceled()
         } else {
             val type = if (types.size == 1) types.first() else MineType.ALL.value
             processorChain.onResult(result.toList().map {

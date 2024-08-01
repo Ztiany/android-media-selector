@@ -52,7 +52,7 @@ internal class VisualMediaPicker(
         try {
             host.startActivityForResult(intent, REQUEST_VISUAL_PICKER)
         } catch (e: Exception) {
-            processorChain.onFailed()
+            processorChain.onCanceled()
         }
     }
 
@@ -70,7 +70,7 @@ internal class VisualMediaPicker(
         val result = if (count > 1) data.getClipDataUris() else data.getSingleDataUri()
         Timber.d("onActivityResult: result=$result")
         if (result.isEmpty()) {
-            processorChain.onFailed()
+            processorChain.onCanceled()
         } else {
             val type = when (this.type) {
                 ActivityResultContracts.PickVisualMedia.ImageOnly -> MineType.IMAGE.value

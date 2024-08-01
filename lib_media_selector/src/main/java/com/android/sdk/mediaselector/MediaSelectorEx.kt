@@ -34,7 +34,6 @@ fun FragmentActivity.newMediaSelector(resultListener: ResultListener): MediaSele
  */
 fun Fragment.newMediaSelector(
     cancellationHandler: () -> Unit = {},
-    failureHandler: () -> Unit = {},
     resultHandler: (List<MediaItem>) -> Unit,
 ): MediaSelector {
 
@@ -46,10 +45,6 @@ fun Fragment.newMediaSelector(
 
         override fun onCanceled() {
             cancellationHandler()
-        }
-
-        override fun onFailed() {
-            failureHandler()
         }
 
     }).also {
@@ -64,7 +59,6 @@ fun Fragment.newMediaSelector(
  */
 fun FragmentActivity.newMediaSelector(
     cancellationHandler: () -> Unit = {},
-    failureHandler: () -> Unit = {},
     resultHandler: (List<MediaItem>) -> Unit,
 ): MediaSelector {
 
@@ -76,10 +70,6 @@ fun FragmentActivity.newMediaSelector(
 
         override fun onCanceled() {
             cancellationHandler()
-        }
-
-        override fun onFailed() {
-            failureHandler()
         }
 
     }).also {

@@ -33,7 +33,7 @@ internal class CaptureProcessor(
         Timber.d("start is called with: $params")
         if (!hasCamera(host.context)) {
             Timber.w("The device has no camera apps.")
-            processorChain.onFailed()
+            processorChain.onCanceled()
         }
 
         getPermissionRequester().askForCameraPermission(
@@ -49,7 +49,7 @@ internal class CaptureProcessor(
             host.startActivityForResult(intent, REQUEST_CAPTURE_PHOTO, null)
         } catch (e: Exception) {
             Timber.e(e, "takePhotoFromCamera error")
-            processorChain.onFailed()
+            processorChain.onCanceled()
         }
     }
 
@@ -60,14 +60,15 @@ internal class CaptureProcessor(
         }
 
         if (resultCode != Activity.RESULT_OK) {
-            processorChain.onFailed()
+            processorChain.onCanceled()
+            return
         }
 
         // 检测文件是否被保存下来
         val savedFile = File(savePath)
         if (!savedFile.exists()) {
             Timber.d("onActivityResult file not exists: $savedFile")
-            processorChain.onFailed()
+            processorChain.onCanceled()
         } else {
             Timber.d("onActivityResult file exists: $savedFile")
             val uri = Uri.fromFile(savedFile)

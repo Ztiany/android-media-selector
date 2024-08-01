@@ -53,14 +53,14 @@ internal class CropProcessor(
         val uCropResult = getUCropResult(data)
         Timber.d("processCropResult() called with: data = [$uCropResult]")
         if (uCropResult == null) {
-            processorChain.onFailed()
+            processorChain.onCanceled()
             return
         }
 
         val absolutePath = uCropResult.getAbsolutePath(host.context)
         Timber.d("processCropResult() called with: absolutePath = [$absolutePath]")
         if (absolutePath.isNullOrEmpty()) {
-            processorChain.onFailed()
+            processorChain.onCanceled()
             return
         }
 

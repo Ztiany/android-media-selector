@@ -38,7 +38,7 @@ internal class CopyToAppSpecificProcessor(
 
                 val copied = copyToInternal(host.context, item)
                 if (copied == null) {
-                    processorChain.onFailed()
+                    processorChain.onCanceled()
                     return@launch
                 }
                 copiedItems.add(copied)

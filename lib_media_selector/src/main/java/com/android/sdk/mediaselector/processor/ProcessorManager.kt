@@ -18,9 +18,6 @@ internal class ProcessorManager(
     private var processorProgress = 0
 
     private val processorChain = object : ProcessorChain {
-        override fun onFailed() {
-            resultListener.onFailed()
-        }
 
         override fun onCanceled() {
             resultListener.onCanceled()
