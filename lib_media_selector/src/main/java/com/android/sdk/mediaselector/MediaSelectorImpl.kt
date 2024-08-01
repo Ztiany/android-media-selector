@@ -2,7 +2,6 @@ package com.android.sdk.mediaselector
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.core.os.BundleCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -21,25 +20,15 @@ import com.android.sdk.mediaselector.processor.Processor
 import com.android.sdk.mediaselector.processor.ProcessorManager
 import timber.log.Timber
 
-internal class MediaSelectorImpl : MediaSelector, ComponentStateHandler {
+internal class MediaSelectorImpl(
+    private val actFragWrapper: ActFragWrapper,
+    private val postProcessors: List<Processor>,
+    resultListener: ResultListener
+) : MediaSelector, ComponentStateHandler {
 
     private var currentAction: Action? = null
 
-    private val processorManager: ProcessorManager
-
-    private val actFragWrapper: ActFragWrapper
-
-    private val postProcessors = mutableListOf<Processor>()
-
-    constructor(activity: FragmentActivity, resultListener: ResultListener) {
-        actFragWrapper = ActFragWrapper.create(activity)
-        processorManager = ProcessorManager(activity, resultListener)
-    }
-
-    constructor(fragment: Fragment, resultListener: ResultListener) {
-        actFragWrapper = ActFragWrapper.create(fragment)
-        processorManager = ProcessorManager(fragment, resultListener)
-    }
+    private val processorManager: ProcessorManager = ProcessorManager(actFragWrapper.lifecycleOwner, resultListener)
 
     override fun onSaveInstanceState(outState: Bundle) {
         Timber.d("onSaveInstanceState: currentAction = $currentAction")
@@ -67,10 +56,10 @@ internal class MediaSelectorImpl : MediaSelector, ComponentStateHandler {
         processorManager.onActivityResult(requestCode, resultCode, data)
     }
 
-    fun start(action: Action) {
+    fun start(action: Action, scene: String) {
         currentAction = action
         processorManager.install(assembleAllProcessors(action))
-        processorManager.start()
+        processorManager.start(scene)
     }
 
     private fun assembleAllProcessors(action: Action) = action.assembleProcessors(actFragWrapper) + postProcessors
@@ -128,12 +117,6 @@ internal class MediaSelectorImpl : MediaSelector, ComponentStateHandler {
             it.builtInSelector = this
         }
     }
-
-    override fun withPostProcessor(vararg processors: Processor): MediaSelector {
-        postProcessors.addAll(processors)
-        return this
-    }
-
 
     override fun selectImage(): SelectImageAction {
         return SelectImageAction().also {

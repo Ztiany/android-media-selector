@@ -79,6 +79,7 @@ internal class VisualMediaPicker(
             }
             processorChain.onResult(result.toList().map {
                 val realPath = it.getAbsolutePath(host.context)
+
                 MediaItem(
                     id = it.toString(),
                     source = Source.Selector,

@@ -8,31 +8,38 @@ import android.widget.TextView
 import com.android.base.delegate.simpl.DelegateActivity
 import com.android.sdk.mediaselector.MediaItem
 import com.android.sdk.mediaselector.SelectorConfigurer
-import com.android.sdk.mediaselector.newMediaSelector
+import com.android.sdk.mediaselector.buildMediaSelector
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 
 class MainActivity : DelegateActivity() {
 
-    private val mediaSelector = newMediaSelector { result ->
-        result.forEach {
+    private val mediaSelector = buildMediaSelector {
+        withProcessor(imageCompressor())
+        onResults { handleSelectedItems(it) }
+    }
+
+    private fun handleSelectedItems(results: List<MediaItem>) {
+        results.forEach {
             Timber.e("item :$it")
         }
 
         if (takingByMediaStore) {
-            selectedItems = result
+            selectedItems = results
             takingByMediaStore = false
         }
 
         if (takingFile) {
             takingFile = false
-            showFiles(result)
+            showFiles(results)
         } else {
-            showMedias(result)
+            showMedias(results)
         }
     }
 
+
     private var takingFile = false
+
     private var takingByMediaStore = false
 
     private lateinit var fileTextView: TextView

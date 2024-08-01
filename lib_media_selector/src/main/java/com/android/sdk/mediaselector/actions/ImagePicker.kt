@@ -23,6 +23,9 @@ class ImagePicker() : Action {
 
     private var cropOptions: CropOptions? = null
 
+    private var useSAF = false
+    private var takePersistentUriPermission = false
+
     fun count(count: Int): ImagePicker {
         this.count = count
         return this
@@ -41,19 +44,19 @@ class ImagePicker() : Action {
         return this
     }
 
-    fun start() {
-        builtInSelector?.start(this)
+    override fun start(scene: String) {
+        builtInSelector?.start(this, scene)
     }
 
     override fun assembleProcessors(host: ActFragWrapper): List<Processor> {
         return buildList {
-            if (ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(host.context)) {
+            if (ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(host.context) && !useSAF && !takePersistentUriPermission) {
                 val visualType = if (type.isEmpty()) {
                     ActivityResultContracts.PickVisualMedia.ImageOnly
                 } else ActivityResultContracts.PickVisualMedia.SingleMimeType(type)
                 add(VisualMediaPicker(host, visualType, count))
             } else {
-                add(SAFPicker(host, listOf(type.takeIf { it.isNotEmpty() } ?: MineType.IMAGE.value), count > 1))
+                add(SAFPicker(host, listOf(type.takeIf { it.isNotEmpty() } ?: MineType.IMAGE.value), takePersistentUriPermission, count > 1))
             }
             cropOptions?.let { add(CropProcessor(host, it)) }
         }
@@ -63,12 +66,16 @@ class ImagePicker() : Action {
         count = parcel.readInt()
         type = parcel.readString() ?: ""
         cropOptions = ParcelCompat.readParcelable(parcel, CropOptions::class.java.classLoader, CropOptions::class.java)
+        useSAF = parcel.readByte() != 0.toByte()
+        takePersistentUriPermission = parcel.readByte() != 0.toByte()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(count)
         parcel.writeString(type)
         parcel.writeParcelable(cropOptions, flags)
+        parcel.writeByte(if (useSAF) 1 else 0)
+        parcel.writeByte(if (takePersistentUriPermission) 1 else 0)
     }
 
     override fun describeContents(): Int {
