@@ -7,10 +7,7 @@ import com.bumptech.glide.Glide
 internal class GlideImageLoader : ImageLoader {
 
     override fun loadImage(context: Context, url: String, imageView: ImageView) {
-        Glide.with(context)
-            .load(url)
-            .centerCrop()
-            .into(imageView)
+        Glide.with(context).load(url).into(imageView)
     }
 
     override fun loadImage(context: Context, imageView: ImageView, url: String, maxWidth: Int, maxHeight: Int) {
